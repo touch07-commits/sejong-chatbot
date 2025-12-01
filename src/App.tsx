@@ -1,7 +1,7 @@
 import type { FormEvent } from 'react'
 import { useEffect, useState } from 'react'
 import './App.css'
-import { saveMessageToFirestore } from './firebase'
+// import { saveMessageToFirestore } from './firebase'
 
 function App() {
   type Message = {
@@ -59,17 +59,17 @@ function App() {
 
       setMessages((prev) => [...prev, assistantMessage])
 
-      // Firebase에 대화 저장
-      await Promise.all([
-        saveMessageToFirestore({
-          role: 'user',
-          content: userMessage.content,
-        }),
-        saveMessageToFirestore({
-          role: 'assistant',
-          content: assistantMessage.content,
-        }),
-      ])
+      // TODO: Firestore 저장은 나중에 다시 활성화
+      // await Promise.all([
+      //   saveMessageToFirestore({
+      //     role: 'user',
+      //     content: userMessage.content,
+      //   }),
+      //   saveMessageToFirestore({
+      //     role: 'assistant',
+      //     content: assistantMessage.content,
+      //   }),
+      // ])
     } catch (err) {
       console.error(err)
       setError('답변을 불러오지 못했어요. 잠시 후 다시 시도해주세요.')
