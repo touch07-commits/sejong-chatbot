@@ -28,7 +28,7 @@ export const handler: Handler = async (event) => {
     const body = event.body ? JSON.parse(event.body) : {}
     const messages: ChatMessage[] = body.messages ?? []
 
-    const apiKey = process.env.OPENAI_API_KEY
+    const apiKey = process.env.gptapikey ?? process.env.OPENAI_API_KEY
     if (!apiKey) {
       return {
         statusCode: 500,
