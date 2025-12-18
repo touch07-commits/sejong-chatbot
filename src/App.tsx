@@ -2705,103 +2705,175 @@ function App() {
                   <p style={{ margin: 0, fontWeight: 600 }}>세종대왕과 대화를 시작해보세요!</p>
                 </div>
               ) : (
-                messages.map((m, idx) => {
-                  const isUser = m.role === 'user'
-                  const showAvatar = idx === 0 || messages[idx - 1].role !== m.role
+                <>
+                  {messages.map((m, idx) => {
+                    const isUser = m.role === 'user'
+                    const showAvatar = idx === 0 || messages[idx - 1].role !== m.role
 
-                  return (
-                    <div key={m.id} style={{
+                    return (
+                      <div key={m.id} style={{
+                        display: 'flex',
+                        alignItems: 'flex-end',
+                        gap: '0.75rem',
+                        maxWidth: '960px',
+                        margin: '0 auto',
+                        width: '100%',
+                        flexDirection: isUser ? 'row-reverse' : 'row'
+                      }}>
+                        {/* 아바타 */}
+                        {showAvatar ? (
+                          <div style={{
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '50%',
+                            background: isUser ? 'var(--traditional-blue)' : 'white',
+                            color: 'white',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1.1rem',
+                            fontWeight: 800,
+                            flexShrink: 0,
+                            border: '2px solid white',
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                            alignSelf: 'flex-start',
+                            marginTop: '0.25rem',
+                            overflow: 'hidden'
+                          }}>
+                            {isUser ? (
+                              '나'
+                            ) : (
+                              <img
+                                src="/sejong-avata.png"
+                                alt="세종대왕"
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover'
+                                }}
+                              />
+                            )}
+                          </div>
+                        ) : (
+                          <div style={{ width: '40px', flexShrink: 0 }}></div>
+                        )}
+
+                        {/* 메시지 버블 */}
+                        <div style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '0.25rem',
+                          alignItems: isUser ? 'flex-end' : 'flex-start',
+                          maxWidth: 'calc(100% - 56px)'
+                        }}>
+                          {showAvatar && (
+                            <p style={{
+                              margin: '0 0 0.25rem 0',
+                              fontSize: '1.1rem',
+                              fontWeight: 600,
+                              color: '#666',
+                              paddingLeft: isUser ? 0 : '0.25rem',
+                              paddingRight: isUser ? '0.25rem' : 0
+                            }}>
+                              {isUser ? '나' : '세종대왕'}
+                            </p>
+                          )}
+                          <div style={{
+                            padding: '1rem 1.25rem',
+                            background: isUser
+                              ? 'var(--traditional-blue)'
+                              : 'white',
+                            color: isUser ? 'white' : '#0d121b',
+                            borderRadius: '1.25rem',
+                            borderTopLeftRadius: !isUser && showAvatar ? '0.25rem' : '1.25rem',
+                            borderTopRightRadius: isUser && showAvatar ? '0.25rem' : '1.25rem',
+                            fontSize: '1.5rem',
+                            lineHeight: '1.6',
+                            whiteSpace: 'pre-wrap',
+                            wordBreak: 'break-word',
+                            boxShadow: isUser
+                              ? '0 2px 8px rgba(40, 77, 117, 0.2)'
+                              : '0 1px 3px rgba(0,0,0,0.08)',
+                            border: isUser ? 'none' : '1px solid var(--border-color)',
+                            maxWidth: '100%'
+                          }}>
+                            {m.content}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+
+                  {/* 세종대왕 생각 중 표시 */}
+                  {submitting && (
+                    <div style={{
                       display: 'flex',
                       alignItems: 'flex-end',
                       gap: '0.75rem',
                       maxWidth: '960px',
                       margin: '0 auto',
                       width: '100%',
-                      flexDirection: isUser ? 'row-reverse' : 'row'
+                      flexDirection: 'row'
                     }}>
-                      {/* 아바타 */}
-                      {showAvatar ? (
-                        <div style={{
-                          width: '40px',
-                          height: '40px',
-                          borderRadius: '50%',
-                          background: isUser ? 'var(--traditional-blue)' : 'white',
-                          color: 'white',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '1.1rem',
-                          fontWeight: 800,
-                          flexShrink: 0,
-                          border: '2px solid white',
-                          boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-                          alignSelf: 'flex-start',
-                          marginTop: '0.25rem',
-                          overflow: 'hidden'
-                        }}>
-                          {isUser ? (
-                            '나'
-                          ) : (
-                            <img
-                              src="/sejong-avata.png"
-                              alt="세종대왕"
-                              style={{
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover'
-                              }}
-                            />
-                          )}
-                        </div>
-                      ) : (
-                        <div style={{ width: '40px', flexShrink: 0 }}></div>
-                      )}
-
-                      {/* 메시지 버블 */}
+                      <div style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        background: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        border: '2px solid white',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                        overflow: 'hidden'
+                      }}>
+                        <img
+                          src="/sejong-avata.png"
+                          alt="세종대왕"
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                          }}
+                        />
+                      </div>
                       <div style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '0.25rem',
-                        alignItems: isUser ? 'flex-end' : 'flex-start',
-                        maxWidth: 'calc(100% - 56px)'
+                        gap: '0.25rem'
                       }}>
-                        {showAvatar && (
-                          <p style={{
-                            margin: '0 0 0.25rem 0',
-                            fontSize: '1.1rem',
-                            fontWeight: 600,
-                            color: '#666',
-                            paddingLeft: isUser ? 0 : '0.25rem',
-                            paddingRight: isUser ? '0.25rem' : 0
-                          }}>
-                            {isUser ? '나' : '세종대왕'}
-                          </p>
-                        )}
+                        <p style={{
+                          margin: '0 0 0.25rem 0',
+                          fontSize: '1.1rem',
+                          fontWeight: 600,
+                          color: '#666',
+                          paddingLeft: '0.25rem'
+                        }}>
+                          세종대왕
+                        </p>
                         <div style={{
                           padding: '1rem 1.25rem',
-                          background: isUser
-                            ? 'var(--traditional-blue)'
-                            : 'white',
-                          color: isUser ? 'white' : '#0d121b',
                           borderRadius: '1.25rem',
-                          borderTopLeftRadius: !isUser && showAvatar ? '0.25rem' : '1.25rem',
-                          borderTopRightRadius: isUser && showAvatar ? '0.25rem' : '1.25rem',
-                          fontSize: '1.5rem',
-                          lineHeight: '1.6',
-                          whiteSpace: 'pre-wrap',
-                          wordBreak: 'break-word',
-                          boxShadow: isUser
-                            ? '0 2px 8px rgba(40, 77, 117, 0.2)'
-                            : '0 1px 3px rgba(0,0,0,0.08)',
-                          border: isUser ? 'none' : '1px solid var(--border-color)',
-                          maxWidth: '100%'
+                          background: 'white',
+                          color: '#666',
+                          fontSize: '1.3rem',
+                          fontWeight: 700,
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                          border: '1px solid #f0f0f0',
+                          borderTopLeftRadius: '0.25rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          fontStyle: 'italic'
                         }}>
-                          {m.content}
+                          <span>세종대왕님이 생각 중이오...</span>
+                          <span className="loading-dots"></span>
                         </div>
                       </div>
                     </div>
-                  )
-                })
+                  )}
+                </>
               )}
               {error && (
                 <div style={{
