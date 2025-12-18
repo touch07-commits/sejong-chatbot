@@ -8,7 +8,6 @@ import {
   saveLetter,
   getLetters,
   getChatSessions,
-  saveLearnResult,
   getLearnResults,
   saveTypingResult,
   getTypingResults,
@@ -106,18 +105,18 @@ function App() {
   
   // 학습 관련
   const [allLearnItems, setAllLearnItems] = useState<LearnItem[]>([])
-  const [learnItems, setLearnItems] = useState<LearnItem[]>([])
+  const [_learnItems, setLearnItems] = useState<LearnItem[]>([])
   // @ts-ignore - setLearnResults에서 사용
   const [learnResults, setLearnResults] = useState<LearnResult[]>([])
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([])
-  const [droppedItems, setDroppedItems] = useState<Record<string, { name: string; description: string } | null>>({})
-  const [draggedItem, setDraggedItem] = useState<{ name: string; description: string } | null>(null)
+  const [_droppedItems, setDroppedItems] = useState<Record<string, { name: string; description: string } | null>>({})
+  const [_draggedItem, _setDraggedItem] = useState<{ name: string; description: string } | null>(null)
   const [currentPage, setCurrentPage] = useState(0)
-  const [shuffledDragItems, setShuffledDragItems] = useState<LearnItem[]>([])
+  const [_shuffledDragItems, setShuffledDragItems] = useState<LearnItem[]>([])
   // @ts-ignore - setIsDragging에서 사용
-  const [isDragging, setIsDragging] = useState(false)
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
-  const [successMessage, setSuccessMessage] = useState('')
+  const [_isDragging, _setIsDragging] = useState(false)
+  const [_showSuccessMessage, _setShowSuccessMessage] = useState(false)
+  const [_successMessage, _setSuccessMessage] = useState('')
   
   // 글자꾸미기 관련
   const [decoratedLetters, setDecoratedLetters] = useState<{ id: string; letter: string; dataUrl: string; createdAt: string }[]>([])
@@ -1372,160 +1371,6 @@ function App() {
       setSendingLetter(false)
     }
   }
-
-  const handleDragStart = (e: React.DragEvent, name: string, description: string) => {
-    setIsDragging(true)
-    const data = JSON.stringify({ name, description })
-    e.dataTransfer.effectAllowed = 'move'
-    e.dataTransfer.setData('text/plain', data)
-    e.dataTransfer.setData('application/json', data)
-    setDraggedItem({ name, description })
-    // 드래그 중 시각적 피드백
-    if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget.style.opacity = '0.5'
-    }
-  }
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    e.dataTransfer.dropEffect = 'move'
-  }
-
-  const handleDragEnter = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    const target = e.currentTarget as HTMLElement
-    if (!target.classList.contains('drag-over')) {
-      target.classList.add('drag-over')
-    }
-  }
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    const target = e.currentTarget as HTMLElement
-    // 자식 요소로 이동한 경우는 제거하지 않음
-    const rect = target.getBoundingClientRect()
-    const x = e.clientX
-    const y = e.clientY
-    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
-      target.classList.remove('drag-over')
-    }
-  }
-
-  const handleDropOnCard = (e: React.DragEvent, cardId: string) => {
-    e.preventDefault()
-    e.stopPropagation()
-    
-    const target = e.currentTarget as HTMLElement
-    target.classList.remove('drag-over')
-
-    let itemData: { name: string; description: string } | null = null
-    
-    // draggedItem 상태를 우선 사용 (더 안정적)
-    if (draggedItem) {
-      itemData = draggedItem
-    } else {
-      // 상태가 없으면 dataTransfer에서 가져오기 시도
-      try {
-        const textData = e.dataTransfer.getData('text/plain')
-        if (textData) {
-          itemData = JSON.parse(textData)
-        }
-      } catch {
-        try {
-          const jsonData = e.dataTransfer.getData('application/json')
-          if (jsonData) {
-            itemData = JSON.parse(jsonData)
-          }
-        } catch {
-          console.error('Failed to parse drag data')
-        }
-      }
-    }
-
-    if (!itemData) {
-      return
-    }
-
-    const card = learnItems.find(item => item.id === cardId)
-    if (!card) {
-      return
-    }
-
-    // 올바른 매칭인지 확인
-    const isCorrect = card.name === itemData.name
-
-    setDroppedItems(prev => {
-      const updated = {
-        ...prev,
-        [cardId]: isCorrect ? itemData : null
-      }
-      
-      // 완료 체크 (현재 페이지의 4개만)
-      setTimeout(() => {
-        const allMatched = learnItems.every(item => {
-          const dropped = updated[item.id]
-          return dropped && dropped.name === item.name
-        })
-
-        if (allMatched && learnItems.length > 0) {
-          setLearnResults((prevResults: LearnResult[]) => {
-            const result: LearnResult = {
-              id: crypto.randomUUID(),
-              completedAt: new Date().toISOString(),
-              items: learnItems.map(item => item.name)
-            }
-            const updatedResults = [...prevResults, result]
-            
-            if (student) {
-              saveLearnResult(student.uid, result).catch(e => {
-                console.error('Failed to save learn result:', e)
-              })
-            }
-            
-            return updatedResults
-          })
-          
-          // 다음 페이지로 이동
-          const nextPage = currentPage + 1
-          const totalPages = Math.ceil(allLearnItems.length / 4)
-          
-          if (nextPage < totalPages) {
-            setTimeout(() => {
-              setSuccessMessage('정답입니다! 다음 문제로 넘어갑니다.')
-              setShowSuccessMessage(true)
-              setTimeout(() => {
-                setCurrentPage(nextPage)
-                setShowSuccessMessage(false)
-              }, 2000)
-            }, 500)
-          } else {
-            setSuccessMessage('모든 문제를 완료했습니다! 세종대왕의 업적을 모두 학습하셨습니다.')
-            setShowSuccessMessage(true)
-            setTimeout(() => {
-              setShowSuccessMessage(false)
-            }, 3000)
-          }
-        }
-      }, 0)
-      
-      return updated
-    })
-
-    setDraggedItem(null)
-  }
-
-  const handleDragEnd = (e: React.DragEvent) => {
-    setIsDragging(false)
-    setDraggedItem(null)
-    // 드래그 종료 시 시각적 피드백 복원
-    if (e.currentTarget instanceof HTMLElement) {
-      e.currentTarget.style.opacity = '1'
-    }
-  }
-
 
   // 구글 로그인 핸들러
   const handleGoogleLogin = async () => {
