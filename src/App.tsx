@@ -177,38 +177,9 @@ function App() {
   const koreanWords = [
     { word: '도담도담', meaning: '어린아이가 탈 없이 잘 놀며 자라는 모양' },
     { word: '팔랑팔랑', meaning: '나뭇잎이나 나비 따위가 가볍게 계속 날아다니는 모양' },
-    { word: '와그르르', meaning: '담겨 있던 물건들이 갑자기 쏟아지는 소리' },
-    { word: '또랑또랑', meaning: '조금도 흐리지 않고 아주 밝고 똑똑한 모양' },
     { word: '쪼로니', meaning: '비교적 작은 것들이 나란히 있는 모양' },
-    { word: '가온누리', meaning: '세상의 중심' },
-    { word: '가온길', meaning: '정직하고 올바른 가운데 길' },
-    { word: '나래', meaning: '날개' },
-    { word: '나봄', meaning: '남보다 나는 것을 봄' },
-    { word: '다솜', meaning: '사랑' },
-    { word: '다온', meaning: '좋은 모든 것' },
-    { word: '라온', meaning: '즐거운' },
-    { word: '마루', meaning: '하늘, 꼭대기' },
-    { word: '미르', meaning: '용' },
-    { word: '바다', meaning: '바다처럼 넓은 마음' },
-    { word: '바람', meaning: '바라는 것이 이루어짐' },
-    { word: '새론', meaning: '새로운' },
-    { word: '슬기', meaning: '지혜' },
-    { word: '아라', meaning: '알다의 어근, 바다' },
-    { word: '온새미로', meaning: '온전하고 완전하게' },
-    { word: '이든', meaning: '이룬, 완성된' },
-    { word: '하늬', meaning: '서쪽에서 부는 바람' },
-    { word: '한별', meaning: '크고 밝은 별' },
-    { word: '해리', meaning: '헤아리다, 생각하다' },
-    { word: '해솔', meaning: '해처럼 밝고 솔처럼 푸르다' },
-    { word: '로운', meaning: '복이 많은' },
-    { word: '모아', meaning: '모이다' },
-    { word: '별하', meaning: '별처럼 빛나다' },
-    { word: '빛가람', meaning: '빛이 나는 강' },
-    { word: '산들', meaning: '살랑살랑 부는 바람' },
-    { word: '소담', meaning: '수수하고 탐스럽다' },
-    { word: '아름', meaning: '아름다움' },
-    { word: '여울', meaning: '강이나 내의 얕고 여린 곳' },
-    { word: '이루', meaning: '이루다' }
+    { word: '또랑또랑', meaning: '조금도 흐리지 않고 아주 밝고 똑똑한 모양' },
+    { word: '와그르르', meaning: '담겨 있던 물건들이 갑자기 쏟아지는 소리' }
   ]
 
   // API 상태 확인
@@ -1459,14 +1430,19 @@ function App() {
   // 역할 선택 화면
   if (student && !userRole) {
   return (
-    <div className="app-root">
-        <div style={{ 
-          position: 'fixed', 
-          top: '50%', 
-          left: '50%', 
-          transform: 'translate(-50%, -50%)', 
+    <div className="app-root" style={{
+      backgroundImage: 'url(/firstpage.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }}>
+        <div style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           zIndex: 1000,
-          background: 'white',
+          background: 'rgba(255, 255, 255, 0.95)',
           padding: '3rem',
           borderRadius: '0.8rem',
           boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
@@ -2190,14 +2166,19 @@ function App() {
   // 학생 화면
   if (!student) {
     return (
-      <div className="app-root">
-        <div style={{ 
-          position: 'fixed', 
-          top: '50%', 
-          left: '50%', 
-          transform: 'translate(-50%, -50%)', 
+      <div className="app-root" style={{
+        backgroundImage: 'url(/firstpage.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}>
+        <div style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           zIndex: 1000,
-          background: 'white',
+          background: 'rgba(255, 255, 255, 0.95)',
           padding: '3rem',
           borderRadius: '0.8rem',
           boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
@@ -2432,7 +2413,7 @@ function App() {
                   />
                 </div>
                 <div>
-                  <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#0d121b' }}>
+                  <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 700, color: '#0d121b' }}>
                     세종대왕님
                   </h2>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.2rem' }}>
@@ -2774,19 +2755,101 @@ function App() {
                 </div>
               ) : (
                 savedLetters.map((l) => (
-                  <div key={l.id} className="letter-item">
+                  <div
+                    key={l.id}
+                    className="letter-item"
+                    onClick={() => setSelectedLetterDetail(l)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <div className="letter-date">{new Date(l.createdAt).toLocaleDateString('ko-KR')}</div>
-                    <div className="letter-content">{l.content}</div>
+                    <div className="letter-content" style={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical'
+                    }}>
+                      {l.content}
+                    </div>
                     {l.reply && (
-                      <div className="letter-reply">
-                        <div className="letter-label">답장</div>
-                        {l.reply}
+                      <div style={{ fontSize: '0.85rem', color: 'var(--traditional-red)', marginTop: '0.5rem' }}>
+                        💌 답장이 도착했어요!
                       </div>
                     )}
                   </div>
                 ))
               )}
             </div>
+
+            {/* 편지 상세보기 모달 */}
+            {selectedLetterDetail && (
+              <div
+                className="letter-modal-overlay"
+                onClick={() => setSelectedLetterDetail(null)}
+              >
+                <div
+                  className="letter-modal-content"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    className="letter-modal-close"
+                    onClick={() => setSelectedLetterDetail(null)}
+                  >
+                    ✕
+                  </button>
+
+                  <div className="letter-modal-scroll">
+                    <div className="letter-scroll-rod letter-scroll-rod-top"></div>
+                    <div className="letter-scroll-content">
+                      <div className="letter-scroll-paper">
+                        <div className="letter-scroll-corner letter-scroll-corner-tl"></div>
+                        <div className="letter-scroll-corner letter-scroll-corner-tr"></div>
+                        <div className="letter-scroll-corner letter-scroll-corner-bl"></div>
+                        <div className="letter-scroll-corner letter-scroll-corner-br"></div>
+
+                        <div style={{ marginBottom: '2rem' }}>
+                          <div style={{ fontSize: '0.9rem', color: '#888', marginBottom: '1rem' }}>
+                            받는 사람: 세종대왕님
+                          </div>
+                          <div style={{ fontSize: '0.85rem', color: '#999' }}>
+                            {new Date(selectedLetterDetail.createdAt).toLocaleDateString('ko-KR', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </div>
+                        </div>
+
+                        <div className="scroll-text" style={{ whiteSpace: 'pre-wrap', marginBottom: '2rem' }}>
+                          {selectedLetterDetail.content}
+                        </div>
+
+                        {selectedLetterDetail.reply && (
+                          <div style={{
+                            marginTop: '3rem',
+                            paddingTop: '2rem',
+                            borderTop: '2px dashed var(--border-color)'
+                          }}>
+                            <div style={{
+                              fontSize: '1.1rem',
+                              fontWeight: 800,
+                              color: 'var(--traditional-red)',
+                              marginBottom: '1.5rem'
+                            }}>
+                              💌 세종대왕님의 답장
+                            </div>
+                            <div className="scroll-text" style={{ whiteSpace: 'pre-wrap' }}>
+                              {selectedLetterDetail.reply}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="letter-scroll-rod letter-scroll-rod-bottom"></div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -3817,7 +3880,7 @@ function App() {
 
             {!selectedWord ? (
               <div className="word-cards-container">
-                <h2 style={{ textAlign: 'center', marginBottom: '2rem', color: '#2c3e50' }}>
+                <h2 style={{ textAlign: 'center', marginBottom: '2rem', color: '#2c3e50', fontSize: '2rem' }}>
                   낱말을 선택하여 문장을 만들어 봅시다
                 </h2>
                 <div className="word-cards">
@@ -3871,6 +3934,9 @@ function App() {
                     placeholder={`예: ${selectedWord.word}는 정말 아름다운 말이에요.`}
                     rows={4}
                     disabled={submittingWord}
+                    onCompositionStart={() => {}}
+                    onCompositionEnd={(e: any) => setUserSentence(e.target.value)}
+                    style={{ color: '#000', WebkitTextFillColor: '#000', opacity: 1 }}
                   />
                   <button
                     className="sentence-submit-btn"

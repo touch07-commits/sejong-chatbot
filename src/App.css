@@ -17,12 +17,12 @@
 /* 전통 서체 적용 */
 * {
   font-family: "Gungsuh", "GungsuhChe", "궁서", "궁서체", "Batang", "바탕", "BatangChe", "바탕체", "Nanum Myeongjo", serif !important;
-  font-size: 1.8rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 
 body {
-  font-size: 1.9rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 
@@ -51,8 +51,8 @@ body {
 
 /* 사이드바 메뉴 - 격자 무늬 삭제, 순수 단청 문양 적용 */
 .sidebar-menu {
-  width: 320px;
-  min-width: 320px;
+  width: 260px;
+  min-width: 260px;
   background: #FCFAF5;
   background-image:
     /* 작은 단청 꽃무늬 (투명도 조절로 은은하게) */
@@ -80,8 +80,8 @@ body {
 }
 
 .user-avatar {
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   background: transparent;
   color: var(--traditional-red);
   border-radius: 50%;
@@ -89,25 +89,25 @@ body {
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 2.3rem;
+  font-size: 1.5rem;
   flex-shrink: 0;
 }
 
 .user-details {
   flex: 1;
-  font-size: 1.8rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: #333;
 }
 
 .logout-btn-small {
   margin-top: auto;
-  padding: 1rem;
+  padding: 0.7rem;
   background: #f5f5f5;
   border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   cursor: pointer;
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: #555;
   transition: all 0.2s;
@@ -128,23 +128,23 @@ body {
 /* 모드 버튼 - 창살/격자 무늬 완전 제거, 깔끔한 스타일 */
 .mode-button {
   width: 100%;
-  padding: 1rem 1rem;
+  padding: 0.85rem 0.85rem;
   border-radius: 0.8rem;
   border: 2px solid var(--border-color);
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   color: #555;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08),
               0 2px 4px rgba(0,0,0,0.06),
               inset 0 -2px 0 rgba(0,0,0,0.05);
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.6rem;
   position: relative;
   overflow: hidden;
   word-break: keep-all;
-  line-height: 1.3;
+  line-height: 1.4;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -181,11 +181,11 @@ body {
 .mode-button.active::after {
   content: '✿';
   position: absolute;
-  right: 15px;
+  right: 14px;
   top: 50%;
   transform: translateY(-50%);
   color: rgba(255,255,255,0.3);
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .mode-button:active {
@@ -219,7 +219,7 @@ body {
 
 /* 헤더 - 단청 무늬 띠 */
 .chat-header {
-  padding: 2.5rem 3rem 2rem;
+  padding: 1.5rem 2rem 1.2rem;
   background: white;
   border-bottom: 1px solid var(--border-color);
   position: relative;
@@ -248,42 +248,42 @@ body {
 
 .chat-header h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.4rem;
   color: #111;
   font-weight: 800;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
 }
 
 .chat-header h1::before {
   content: '✿';
   color: var(--traditional-red);
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   text-shadow: 2px 2px 0 rgba(232, 184, 86, 0.4);
 }
 
 .chat-header p {
-  margin: 0.5rem 0 0;
-  font-size: 1.2rem;
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
   color: #666;
   font-weight: 700;
-  padding-left: 1.8rem;
+  padding-left: 1.4rem;
 }
 
 /* 채팅 메인 영역 */
 .chat-main {
   flex: 1;
-  padding: 3rem 4rem;
+  padding: 2rem 2.5rem;
   overflow-y: auto;
   background: transparent;
 }
 
 .chat-empty {
   text-align: center;
-  padding: 3rem 1rem;
+  padding: 2rem 1rem;
   color: #888;
-  font-size: 2rem;
+  font-size: 1.2rem;
   opacity: 0.8;
 }
 
@@ -294,12 +294,12 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.2rem;
 }
 
 .message {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   align-items: flex-start;
 }
 
@@ -309,16 +309,16 @@ body {
 
 /* 아바타 - 단청색 적용 */
 .message-avatar {
-  width: 52px;
-  height: 52px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.9rem;
+  font-size: 1.3rem;
   font-weight: 800;
   box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-  border: 3px solid white;
+  border: 2px solid white;
   flex-shrink: 0;
 }
 
@@ -336,12 +336,12 @@ body {
 
 /* 메시지 버블 - 한지 느낌 */
 .message-bubble {
-  padding: 1.8rem 2.5rem;
-  border-radius: 1rem;
+  padding: 1.2rem 1.5rem;
+  border-radius: 0.8rem;
   max-width: 75%;
-  font-size: 1.9rem;
+  font-size: 1rem;
   font-weight: 600;
-  line-height: 1.9;
+  line-height: 1.6;
   position: relative;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
@@ -367,21 +367,21 @@ body {
 .message-meta {
   display: flex;
   align-items: center;
-  margin-bottom: 0.4rem;
-  font-size: 1.5rem;
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
   font-weight: 700;
   opacity: 0.9;
 }
 
 .message-author {
   font-weight: 800;
-  font-size: 1.5rem;
-  margin-right: 0.5rem;
+  font-size: 0.9rem;
+  margin-right: 0.4rem;
 }
 
 /* 채팅 푸터 */
 .chat-footer {
-  padding: 2rem 3rem;
+  padding: 1.2rem 2rem;
   border-top: 2px solid var(--border-color);
   background: #FCFAF5;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
@@ -390,14 +390,14 @@ body {
 .chat-input-scroll-wrapper {
   position: relative;
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 0.7rem;
 }
 
 .chat-input-scroll-rod {
   width: 100%;
-  height: 20px;
+  height: 14px;
   background: linear-gradient(135deg, #8B4513 0%, #654321 50%, #8B4513 100%);
-  border-radius: 10px;
+  border-radius: 7px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   position: relative;
   z-index: 2;
@@ -414,7 +414,7 @@ body {
 
 .chat-input-scroll-content {
   background: linear-gradient(135deg, #8B0000 0%, #A52A2A 50%, #8B0000 100%);
-  background-image: 
+  background-image:
     repeating-linear-gradient(
       45deg,
       transparent,
@@ -422,21 +422,21 @@ body {
       rgba(0, 0, 0, 0.05) 8px,
       rgba(0, 0, 0, 0.05) 16px
     );
-  padding: 12px;
+  padding: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   position: relative;
 }
 
 .chat-input-scroll-paper {
   background: #F5F5DC;
-  background-image: 
+  background-image:
     url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
   border: 2px solid #D4AF37;
   border-radius: 3px;
-  padding: 1rem 1.2rem;
+  padding: 0.7rem 0.9rem;
   position: relative;
   box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05);
-  min-height: 80px;
+  min-height: 60px;
   display: flex;
   align-items: center;
 }
@@ -488,11 +488,11 @@ body {
 
 .chat-textarea {
   flex: 1;
-  min-height: 80px;
-  max-height: 150px;
-  line-height: 1.8;
-  padding: 1rem 1.2rem;
-  font-size: 1.9rem;
+  min-height: 60px;
+  max-height: 120px;
+  line-height: 1.5;
+  padding: 0.7rem 0.9rem;
+  font-size: 1rem;
   border: none;
   border-radius: 0;
   background: transparent !important;
@@ -520,14 +520,14 @@ body {
   border: none;
   border-radius: 0;
   background: transparent !important;
-  font-size: 2.3rem;
+  font-size: 1.6rem;
   font-weight: 600;
   font-family: "Nanum Myeongjo", serif;
   resize: none;
   outline: none;
-  min-height: 600px;
+  min-height: 350px;
   transition: all 0.2s;
-  line-height: 3rem;
+  line-height: 2.5rem;
   color: #333 !important;
   box-shadow: none;
 }
@@ -544,15 +544,15 @@ body {
 
 /* 전송 버튼 - 전통 문양 도장 느낌 */
 .chat-form button {
-  padding: 0 2.5rem;
-  height: 80px;
-  border-radius: 0.8rem;
+  padding: 0 1.5rem;
+  height: 60px;
+  border-radius: 0.6rem;
   border: none;
   background: var(--traditional-red);
-  background-image: 
+  background-image:
     url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
   color: white;
-  font-size: 1.6rem;
+  font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(201, 60, 60, 0.3);
@@ -560,7 +560,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .chat-form button:hover:not(:disabled) {
@@ -577,8 +577,8 @@ body {
 }
 
 .chat-notice {
-  margin: 0.8rem 0 0;
-  font-size: 1.4rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #888;
   text-align: center;
@@ -656,7 +656,7 @@ body {
 }
 
 .letter-container {
-  max-width: 1400px;
+  max-width: 900px;
   margin: 0 auto;
   width: 100%;
   display: flex;
@@ -667,7 +667,7 @@ body {
 .letter-scroll-wrapper {
   position: relative;
   width: 100%;
-  max-width: 1400px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -692,7 +692,7 @@ body {
 
 .letter-scroll-content {
   background: linear-gradient(135deg, #8B0000 0%, #A52A2A 50%, #8B0000 100%);
-  background-image: 
+  background-image:
     repeating-linear-gradient(
       45deg,
       transparent,
@@ -700,7 +700,7 @@ body {
       rgba(0, 0, 0, 0.05) 10px,
       rgba(0, 0, 0, 0.05) 20px
     );
-  padding: 30px;
+  padding: 20px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   position: relative;
 }
@@ -719,10 +719,10 @@ body {
   background-size: 200px 200px, auto;
   border: 3px solid #D4AF37;
   border-radius: 4px;
-  padding: 50px 40px;
+  padding: 30px 25px;
   position: relative;
   box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
-  min-height: 650px;
+  min-height: 450px;
   display: flex;
   flex-direction: column;
 }
@@ -779,10 +779,23 @@ body {
   color: #333;
 }
 
+.letter-scroll-recipient {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+}
+
 .letter-date-header {
   font-size: 1.1rem;
   color: #666;
   font-weight: 600;
+}
+
+.letter-scroll-date-header {
+  font-size: 1.5rem;
+  color: #666;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
 }
 
 .letter-scroll-body {
@@ -815,12 +828,12 @@ body {
 }
 
 .save-button {
-  padding: 1rem 1.5rem;
+  padding: 0.7rem 1.2rem;
   background: var(--traditional-green);
   color: white;
   border: none;
-  border-radius: 0.8rem;
-  font-size: 1.3rem;
+  border-radius: 0.6rem;
+  font-size: 0.95rem;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.3s;
@@ -863,8 +876,8 @@ body {
 .letter-item {
   background: white;
   border: 2px solid var(--border-color);
-  border-radius: 0.8rem;
-  padding: 1.5rem;
+  border-radius: 0.6rem;
+  padding: 1rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   transition: all 0.3s;
 }
@@ -875,14 +888,14 @@ body {
 }
 
 .letter-date {
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   color: #666;
-  margin-bottom: 1rem;
+  margin-bottom: 0.7rem;
   font-weight: 600;
 }
 
 .letter-section {
-  margin-bottom: 1rem;
+  margin-bottom: 0.7rem;
 }
 
 .letter-section:last-child {
@@ -890,39 +903,39 @@ body {
 }
 
 .letter-label {
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 800;
   color: var(--traditional-green);
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.5rem;
 }
 
 .letter-content {
-  font-size: 1.6rem;
-  line-height: 1.7;
+  font-size: 1rem;
+  line-height: 1.6;
   color: #333;
   white-space: pre-wrap;
   word-break: break-word;
-  padding: 1rem;
+  padding: 0.7rem;
   background: #FCFAF5;
-  border-radius: 0.5rem;
+  border-radius: 0.4rem;
   border-left: 3px solid var(--border-color);
 }
 
 .letter-reply {
-  margin-top: 1.2rem;
-  padding-top: 1.2rem;
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
   border-top: 2px dashed var(--border-color);
 }
 
 .letter-reply-content {
-  font-size: 1.6rem;
-  line-height: 1.7;
+  font-size: 1rem;
+  line-height: 1.6;
   color: #333;
   white-space: pre-wrap;
   word-break: break-word;
-  padding: 1rem;
+  padding: 0.7rem;
   background: white;
-  border-radius: 0.5rem;
+  border-radius: 0.4rem;
   border-left: 3px solid var(--traditional-red);
 }
 
@@ -933,6 +946,64 @@ body {
 .letter-reply-content {
   background: white;
   border-left: 3px solid var(--traditional-red);
+}
+
+/* 편지 모달 */
+.letter-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+  backdrop-filter: blur(4px);
+}
+
+.letter-modal-content {
+  position: relative;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: transparent;
+  border-radius: 0.8rem;
+}
+
+.letter-modal-scroll {
+  position: relative;
+  width: 100%;
+}
+
+.letter-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--traditional-red);
+  color: var(--traditional-red);
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.letter-modal-close:hover {
+  background: var(--traditional-red);
+  color: white;
+  transform: scale(1.1);
 }
 
 /* 학습하기 모드 스타일 */
@@ -954,11 +1025,11 @@ body {
 }
 
 .learn-item {
-  padding: 1.2rem 1.5rem;
+  padding: 0.8rem 1rem;
   background: white;
   border: 2px solid var(--border-color);
-  border-radius: 0.8rem;
-  font-size: 1.5rem;
+  border-radius: 0.6rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #333;
   cursor: grab;
@@ -995,26 +1066,26 @@ body {
 
 .learn-instruction {
   text-align: center;
-  margin-bottom: 0.8rem;
-  padding: 0.8rem;
+  margin-bottom: 0.6rem;
+  padding: 0.6rem;
   background: #FCFAF5;
-  border-radius: 1rem;
+  border-radius: 0.7rem;
   border: 2px solid var(--border-color);
   color: var(--traditional-green);
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 0.9rem;
   box-shadow: 4px 4px 0 rgba(205, 190, 172, 0.4);
   flex: 0 0 auto;
 }
 
 .learn-instruction h2 {
   margin: 0 0 0.3rem 0;
-  font-size: 1.8rem;
+  font-size: 1.1rem;
 }
 
 .learn-instruction p {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 0.85rem;
 }
 
 .learn-items-grid {
@@ -1034,8 +1105,8 @@ body {
 .learn-item-card {
   background: white;
   border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  padding: 1rem;
+  border-radius: 0.4rem;
+  padding: 0.7rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1075,25 +1146,25 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1.5rem;
-  min-height: 100px;
+  margin-bottom: 0.8rem;
+  min-height: 70px;
   width: 100%;
 }
 
 .item-icon {
-  font-size: 5rem;
+  font-size: 3.5rem;
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
 }
 
 .check-mark {
   position: absolute;
-  top: -12px;
-  right: -12px;
+  top: -8px;
+  right: -8px;
   background: var(--traditional-green);
   color: white;
   border-radius: 50%;
-  width: 34px;
-  height: 34px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1104,16 +1175,16 @@ body {
 
 .learn-item-drop-zone {
   width: 100%;
-  min-height: 100px;
+  min-height: 70px;
   border: 2px dashed #D4C5A3;
-  border-radius: 0.6rem;
+  border-radius: 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  padding: 1rem;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+  padding: 0.7rem;
   background: #FCFAF5;
   transition: all 0.2s;
   z-index: 2;
@@ -1436,24 +1507,25 @@ body {
 .decorate-main-layout {
   display: flex;
   flex-direction: row;
-  gap: 2rem;
+  gap: 1.5rem;
   align-items: flex-start;
+  height: calc(100vh - 150px);
 }
 
 .decorate-instruction {
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.7rem;
 }
 
 .decorate-instruction h2 {
-  font-size: 2.5rem;
+  font-size: 1.4rem;
   font-weight: 800;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
   color: #111;
 }
 
 .decorate-instruction p {
-  font-size: 1.6rem;
+  font-size: 1rem;
   color: #666;
   font-weight: 600;
 }
@@ -1461,31 +1533,33 @@ body {
 .decorate-toolbar {
   background: white;
   border: 2px solid var(--border-color);
-  border-radius: 0.8rem;
-  padding: 1.5rem;
+  border-radius: 0.6rem;
+  padding: 1rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
 }
 
 .decorate-letter-selector {
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
+  margin-bottom: 0.7rem;
+  padding-bottom: 0.7rem;
   border-bottom: 1px solid var(--border-color);
 }
 
 .decorate-letter-selector label {
   font-weight: 700;
-  font-size: 1.3rem;
-  margin-right: 0.5rem;
+  font-size: 0.95rem;
+  margin-right: 0.4rem;
 }
 
 .letter-input {
-  padding: 0.8rem 1rem;
+  padding: 0.5rem 0.7rem;
   border: 2px solid var(--border-color);
-  border-radius: 0.5rem;
-  font-size: 2rem;
+  border-radius: 0.4rem;
+  font-size: 1.3rem;
   font-weight: 800;
   text-align: center;
-  width: 100px;
+  width: 70px;
   font-family: "Nanum Myeongjo", "Gungsuh", serif;
   color: #111;
   background: white;
@@ -1499,59 +1573,57 @@ body {
 
 .decorate-controls {
   display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.7rem;
 }
 
 .decorate-color-group {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
 .decorate-color-picker {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .decorate-color-picker label {
   font-weight: 700;
-  font-size: 1.2rem;
-  min-width: 50px;
+  font-size: 0.9rem;
+  min-width: 40px;
 }
 
 .decorate-color-picker input[type="color"] {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border: 2px solid var(--border-color);
-  border-radius: 0.5rem;
+  border-radius: 0.4rem;
   cursor: pointer;
 }
 
 .decorate-stroke-width {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.7rem;
 }
 
 .decorate-stroke-width label {
   font-weight: 700;
-  font-size: 1.4rem;
-  min-width: 100px;
+  font-size: 0.9rem;
+  min-width: 70px;
 }
 
 .decorate-stroke-width input[type="range"] {
   flex: 1;
-  max-width: 300px;
+  max-width: 200px;
 }
 
 .decorate-stroke-width span {
   font-weight: 700;
-  font-size: 1.3rem;
-  min-width: 50px;
+  font-size: 0.9rem;
+  min-width: 40px;
 }
 
 .decorate-pattern {
@@ -1563,38 +1635,38 @@ body {
 .decorate-canvas-wrapper {
   background: white;
   border: 2px solid var(--border-color);
-  border-radius: 0.8rem;
-  padding: 2rem;
+  border-radius: 0.6rem;
+  padding: 1.2rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
-  height: 864px;
+  height: 550px;
   width: fit-content;
   box-sizing: border-box;
 }
 
 .decorate-canvas {
   border: 1px solid #ddd;
-  border-radius: 0.5rem;
+  border-radius: 0.4rem;
   cursor: crosshair;
   background: white;
-  width: 800px;
-  height: 800px;
+  width: 500px;
+  height: 500px;
   max-width: 100%;
-  max-height: 900px;
+  max-height: 600px;
   touch-action: none;
   aspect-ratio: 1;
 }
 
 .decorate-canvas-placeholder {
-  min-height: 800px;
+  min-height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #999;
-  font-size: 1.9rem;
+  font-size: 1.1rem;
   font-weight: 600;
 }
 
@@ -1602,47 +1674,45 @@ body {
   flex-shrink: 0;
   background: white;
   border: 2px solid var(--border-color);
-  border-radius: 0.8rem;
-  padding: 2rem;
+  border-radius: 0.6rem;
+  padding: 0.8rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(4, auto);
-  gap: 1.5rem;
-  width: 800px;
-  height: 864px;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 280px;
+  height: 550px;
+  overflow-y: visible;
   box-sizing: border-box;
-  align-content: start;
 }
 
 .decorate-control-group {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.3rem;
   flex-shrink: 0;
   min-width: 0;
 }
 
 .decorate-control-label {
-  font-size: 1.5rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: #333;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.1rem;
 }
 
 .decorate-color-swatches {
   display: flex;
-  gap: 0.8rem;
+  gap: 0.4rem;
   flex-wrap: wrap;
   align-items: center;
 }
 
 .color-swatch {
-  width: 45px;
-  height: 45px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  border: 3px solid transparent;
+  border: 2px solid transparent;
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -1661,8 +1731,8 @@ body {
 
 .decorate-slider {
   width: 100%;
-  height: 8px;
-  border-radius: 4px;
+  height: 6px;
+  border-radius: 3px;
   background: #ddd;
   outline: none;
   -webkit-appearance: none;
@@ -1671,16 +1741,16 @@ body {
 .decorate-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--traditional-red);
   cursor: pointer;
 }
 
 .decorate-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--traditional-red);
   cursor: pointer;
@@ -1689,17 +1759,17 @@ body {
 
 .decorate-pattern-buttons {
   display: flex;
-  gap: 0.8rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
 .pattern-btn {
-  padding: 0.8rem 1.5rem;
+  padding: 0.5rem 0.9rem;
   border: 2px solid var(--border-color);
-  border-radius: 0.5rem;
+  border-radius: 0.4rem;
   background: white;
   color: #555;
-  font-size: 1.6rem;
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
@@ -1718,17 +1788,17 @@ body {
 
 .decorate-actions {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 0.7rem;
+  margin-top: 0.7rem;
 }
 
 .decorate-clear-btn,
 .decorate-save-btn {
   flex: 1;
-  padding: 1.2rem;
+  padding: 0.7rem;
   border: 2px solid var(--border-color);
-  border-radius: 0.5rem;
-  font-size: 1.4rem;
+  border-radius: 0.4rem;
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
@@ -3021,6 +3091,8 @@ body {
   background: linear-gradient(to bottom, #FFFFFF 0%, #FFFEF8 100%);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
   line-height: 1.8;
+  color: #000 !important;
+  -webkit-text-fill-color: #000 !important;
 }
 
 .sentence-input::placeholder {
