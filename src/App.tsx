@@ -633,7 +633,7 @@ function App() {
       } else if (gameStyle === 'archery') {
         startArcheryGame()
       } else {
-        // 클래식 모드
+        // 전통 모드
         typingInputRef.current?.focus()
       }
     }, 50)
@@ -1104,7 +1104,7 @@ function App() {
       return
     }
     
-    // 클래식 모드
+    // 전통 모드
     if (value === currentTarget) {
       handleCorrectAnswer()
       setTimeout(() => {
@@ -1946,7 +1946,7 @@ function App() {
                             color: '#444',
                             border: '1px solid #eee'
                           }}>
-                            {result.mode === 'classic' ? '🔤 클래식' : result.mode === 'falling' ? '☁️ 떨어지는 글자' : '🏹 활 쏘기'}
+                            {result.mode === 'classic' ? '🔤 전통' : result.mode === 'falling' ? '☁️ 떨어지는 글자' : '🏹 활 쏘기'}
                           </div>
                         </div>
 
@@ -3697,7 +3697,7 @@ function App() {
                         resetTyping()
                       }}
                     >
-                      📝 클래식
+                      📝 전통
                     </button>
                     <button
                       className={`game-style-btn ${gameStyle === 'falling' ? 'active' : ''}`}
@@ -3846,7 +3846,7 @@ function App() {
                   </div>
                 )}
                 
-                {/* 클래식 모드 */}
+                {/* 전통 모드 */}
                 {gameStyle === 'classic' && (
                   <div className="typing-target-display">
                     {currentTarget ? (
