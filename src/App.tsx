@@ -93,6 +93,8 @@ function App() {
   const [authLoading, setAuthLoading] = useState(true)
   const [loading, setLoading] = useState(false)
   const [userRole, setUserRole] = useState<UserRole>(null)
+  const [chatCount, setChatCount] = useState(0)
+  const [lastChatReset, setLastChatReset] = useState<string | null>(null)
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
   const [studentActivity, setStudentActivity] = useState<StudentActivity | null>(null)
   const [allStudents, setAllStudents] = useState<Student[]>([])
@@ -228,6 +230,38 @@ function App() {
   // 학생 목록 초기 불러오기
   useEffect(() => {
     fetchStudentList()
+  }, [student])
+
+  // 채팅 횟수 제한 로직
+  useEffect(() => {
+    if (!student) return
+
+    const loadChatCount = () => {
+      const storedData = localStorage.getItem(`chat_limit_${student.uid}`)
+      if (storedData) {
+        const { count, lastReset } = JSON.parse(storedData)
+        const now = new Date()
+        const lastResetDate = new Date(lastReset)
+        
+        // 24시간이 지났는지 확인
+        if (now.getTime() - lastResetDate.getTime() > 24 * 60 * 60 * 1000) {
+          setChatCount(0)
+          const newReset = now.toISOString()
+          setLastChatReset(newReset)
+          localStorage.setItem(`chat_limit_${student.uid}`, JSON.stringify({ count: 0, lastReset: newReset }))
+        } else {
+          setChatCount(count)
+          setLastChatReset(lastReset)
+        }
+      } else {
+        const now = new Date().toISOString()
+        setChatCount(0)
+        setLastChatReset(now)
+        localStorage.setItem(`chat_limit_${student.uid}`, JSON.stringify({ count: 0, lastReset: now }))
+      }
+    }
+
+    loadChatCount()
   }, [student])
 
   // Firebase 인증 상태 확인 및 학생 정보 로드
@@ -1276,6 +1310,12 @@ function App() {
     e.preventDefault()
     if (!input.trim() || submitting) return
 
+    // 채팅 횟수 제한 체크
+    if (chatCount >= 10) {
+      setError('오늘은 세종대왕님과 10번의 대화를 모두 나누었소. 24시간 후에 다시 대화를 나눌 수 있소.')
+      return
+    }
+
     const userMessage: Message = {
       id: crypto.randomUUID(),
       role: 'user',
@@ -1309,6 +1349,16 @@ function App() {
       }
 
       setMessages((prev) => [...prev, assistantMessage])
+
+      // 채팅 횟수 업데이트
+      if (student) {
+        const newCount = chatCount + 1
+        setChatCount(newCount)
+        localStorage.setItem(`chat_limit_${student.uid}`, JSON.stringify({ 
+          count: newCount, 
+          lastReset: lastChatReset 
+        }))
+      }
 
       // 한 대화(세션)를 하나의 문서로 유지하기 위한 Firestore 저장 로직
       if (student) {
@@ -1427,7 +1477,7 @@ function App() {
   const handleRoleSelect = async (role: 'student' | 'teacher') => {
     if (student) {
       try {
-        setUserRole(role)
+      setUserRole(role)
         await saveUserRole(student.uid, role)
       } catch (e) {
         console.error('Failed to save user role:', e)
@@ -1577,13 +1627,13 @@ function App() {
 
   // 3. 로그인은 됐는데 역할이 없는 경우 - 역할 선택 화면
   if (!userRole) {
-    return (
-      <div className="app-root" style={{
-        backgroundImage: 'url(/firstpage.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}>
+  return (
+    <div className="app-root" style={{
+      backgroundImage: 'url(/firstpage.png)',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }}>
         <div style={{
           position: 'fixed',
           top: '50%',
@@ -1670,7 +1720,7 @@ function App() {
               로그아웃
             </button>
           </div>
-          <div style={{ 
+            <div style={{ 
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center', 
@@ -1705,7 +1755,7 @@ function App() {
               padding: '1.5rem 1rem', 
               background: '#fff9e6', 
               border: '1px solid var(--traditional-yellow)', 
-              borderRadius: '0.5rem', 
+              borderRadius: '0.5rem',
               marginBottom: '1rem',
               fontSize: '0.9rem',
               color: '#666',
@@ -1737,13 +1787,13 @@ function App() {
               <button
                 key={s.uid}
                 onClick={() => handleSelectStudent(s)}
-                style={{
+            style={{
                   padding: '1rem',
                   background: selectedStudent?.uid === s.uid ? 'var(--traditional-blue)' : 'white',
                   color: selectedStudent?.uid === s.uid ? 'white' : '#333',
                   border: '1px solid var(--border-color)',
                   borderRadius: '0.8rem',
-                  cursor: 'pointer',
+              cursor: 'pointer',
                   textAlign: 'left',
                   display: 'flex',
                   alignItems: 'center',
@@ -2003,8 +2053,8 @@ function App() {
                         }}>
                           <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1a1a1a' }}>세종대왕의 업적 학습 완료</div>
                           <div style={{ fontSize: '0.9rem', color: '#666' }}>
-                            {new Date(result.completedAt).toLocaleString('ko-KR')}
-                          </div>
+                          {new Date(result.completedAt).toLocaleString('ko-KR')}
+                        </div>
                         </div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
                           {result.items.map((item, idx) => (
@@ -2092,7 +2142,7 @@ function App() {
                               hour: '2-digit',
                               minute: '2-digit'
                             })}
-                          </div>
+                        </div>
                           <div style={{ 
                             background: '#f8f9fa',
                             padding: '0.4rem 1rem',
@@ -2104,7 +2154,7 @@ function App() {
                           }}>
                             {result.mode === 'classic' ? '🔤 전통' : result.mode === 'falling' ? '☁️ 떨어지는 글자' : '🏹 활 쏘기'}
                           </div>
-                        </div>
+                          </div>
 
                         <div style={{ 
                           display: 'grid', 
@@ -2123,7 +2173,7 @@ function App() {
                           <div style={{ background: '#fff1f1', padding: '1rem', borderRadius: '1rem' }}>
                             <div style={{ fontSize: '0.9rem', color: '#e53935', marginBottom: '0.4rem', fontWeight: 600 }}>오답</div>
                             <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#b71c1c' }}>{result.wrong}</div>
-                          </div>
+                            </div>
                           <div style={{ background: '#fff9e6', padding: '1rem', borderRadius: '1rem' }}>
                             <div style={{ fontSize: '0.9rem', color: '#f57f17', marginBottom: '0.4rem', fontWeight: 600 }}>레벨</div>
                             <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#e65100' }}>{result.level}</div>
@@ -2556,32 +2606,32 @@ function App() {
             타자연습
           </button>
         </div>
-        <button 
-          onClick={() => handleRoleSelect('teacher')}
-          style={{
-            width: '100%',
-            padding: '0.8rem',
-            marginBottom: '0.5rem',
-            background: 'var(--traditional-blue)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '0.5rem',
-            fontSize: '1rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            transition: 'all 0.2s'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.opacity = '0.9'
-            e.currentTarget.style.transform = 'scale(1.02)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.opacity = '1'
-            e.currentTarget.style.transform = 'scale(1)'
-          }}
-        >
-          👨‍🏫 교사 화면
-        </button>
+          <button 
+            onClick={() => handleRoleSelect('teacher')}
+            style={{
+              width: '100%',
+              padding: '0.8rem',
+              marginBottom: '0.5rem',
+              background: 'var(--traditional-blue)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontSize: '1rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = '0.9'
+              e.currentTarget.style.transform = 'scale(1.02)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = '1'
+              e.currentTarget.style.transform = 'scale(1)'
+            }}
+          >
+            👨‍🏫 교사 화면
+          </button>
         {student && (
           <button
             onClick={async () => {
@@ -2680,6 +2730,14 @@ function App() {
                     <span style={{ fontSize: '1rem', color: '#666', fontWeight: 600 }}>
                       {submitting ? '답변 작성 중...' : '온라인'}
                     </span>
+                    <span style={{ margin: '0 0.5rem', color: '#ccc' }}>|</span>
+                    <span style={{ 
+                      fontSize: '1rem', 
+                      color: chatCount >= 8 ? 'var(--traditional-red)' : '#666', 
+                      fontWeight: 700 
+                    }}>
+                      오늘의 대화: {chatCount} / 10회
+                    </span>
                   </div>
                 </div>
               </div>
@@ -2707,101 +2765,101 @@ function App() {
               ) : (
                 <>
                   {messages.map((m, idx) => {
-                    const isUser = m.role === 'user'
-                    const showAvatar = idx === 0 || messages[idx - 1].role !== m.role
+                  const isUser = m.role === 'user'
+                  const showAvatar = idx === 0 || messages[idx - 1].role !== m.role
 
-                    return (
-                      <div key={m.id} style={{
-                        display: 'flex',
-                        alignItems: 'flex-end',
-                        gap: '0.75rem',
-                        maxWidth: '960px',
-                        margin: '0 auto',
-                        width: '100%',
-                        flexDirection: isUser ? 'row-reverse' : 'row'
-                      }}>
-                        {/* 아바타 */}
-                        {showAvatar ? (
-                          <div style={{
-                            width: '40px',
-                            height: '40px',
-                            borderRadius: '50%',
-                            background: isUser ? 'var(--traditional-blue)' : 'white',
-                            color: 'white',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '1.1rem',
-                            fontWeight: 800,
-                            flexShrink: 0,
-                            border: '2px solid white',
-                            boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-                            alignSelf: 'flex-start',
-                            marginTop: '0.25rem',
-                            overflow: 'hidden'
-                          }}>
-                            {isUser ? (
-                              '나'
-                            ) : (
-                              <img
-                                src="/sejong-avata.png"
-                                alt="세종대왕"
-                                style={{
-                                  width: '100%',
-                                  height: '100%',
-                                  objectFit: 'cover'
-                                }}
-                              />
-                            )}
-                          </div>
-                        ) : (
-                          <div style={{ width: '40px', flexShrink: 0 }}></div>
-                        )}
-
-                        {/* 메시지 버블 */}
+                  return (
+                    <div key={m.id} style={{
+                      display: 'flex',
+                      alignItems: 'flex-end',
+                      gap: '0.75rem',
+                      maxWidth: '960px',
+                      margin: '0 auto',
+                      width: '100%',
+                      flexDirection: isUser ? 'row-reverse' : 'row'
+                    }}>
+                      {/* 아바타 */}
+                      {showAvatar ? (
                         <div style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          background: isUser ? 'var(--traditional-blue)' : 'white',
+                          color: 'white',
                           display: 'flex',
-                          flexDirection: 'column',
-                          gap: '0.25rem',
-                          alignItems: isUser ? 'flex-end' : 'flex-start',
-                          maxWidth: 'calc(100% - 56px)'
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                            fontSize: '1.1rem',
+                          fontWeight: 800,
+                          flexShrink: 0,
+                          border: '2px solid white',
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                          alignSelf: 'flex-start',
+                          marginTop: '0.25rem',
+                          overflow: 'hidden'
                         }}>
-                          {showAvatar && (
-                            <p style={{
-                              margin: '0 0 0.25rem 0',
-                              fontSize: '1.1rem',
-                              fontWeight: 600,
-                              color: '#666',
-                              paddingLeft: isUser ? 0 : '0.25rem',
-                              paddingRight: isUser ? '0.25rem' : 0
-                            }}>
-                              {isUser ? '나' : '세종대왕'}
-                            </p>
+                          {isUser ? (
+                            '나'
+                          ) : (
+                            <img
+                              src="/sejong-avata.png"
+                              alt="세종대왕"
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover'
+                              }}
+                            />
                           )}
-                          <div style={{
-                            padding: '1rem 1.25rem',
-                            background: isUser
-                              ? 'var(--traditional-blue)'
-                              : 'white',
-                            color: isUser ? 'white' : '#0d121b',
-                            borderRadius: '1.25rem',
-                            borderTopLeftRadius: !isUser && showAvatar ? '0.25rem' : '1.25rem',
-                            borderTopRightRadius: isUser && showAvatar ? '0.25rem' : '1.25rem',
-                            fontSize: '1.5rem',
-                            lineHeight: '1.6',
-                            whiteSpace: 'pre-wrap',
-                            wordBreak: 'break-word',
-                            boxShadow: isUser
-                              ? '0 2px 8px rgba(40, 77, 117, 0.2)'
-                              : '0 1px 3px rgba(0,0,0,0.08)',
-                            border: isUser ? 'none' : '1px solid var(--border-color)',
-                            maxWidth: '100%'
+                        </div>
+                      ) : (
+                        <div style={{ width: '40px', flexShrink: 0 }}></div>
+                      )}
+
+                      {/* 메시지 버블 */}
+                      <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.25rem',
+                        alignItems: isUser ? 'flex-end' : 'flex-start',
+                        maxWidth: 'calc(100% - 56px)'
+                      }}>
+                        {showAvatar && (
+                          <p style={{
+                            margin: '0 0 0.25rem 0',
+                              fontSize: '1.1rem',
+                            fontWeight: 600,
+                            color: '#666',
+                            paddingLeft: isUser ? 0 : '0.25rem',
+                            paddingRight: isUser ? '0.25rem' : 0
                           }}>
-                            {m.content}
-                          </div>
+                            {isUser ? '나' : '세종대왕'}
+                          </p>
+                        )}
+                        <div style={{
+                          padding: '1rem 1.25rem',
+                          background: isUser
+                            ? 'var(--traditional-blue)'
+                            : 'white',
+                          color: isUser ? 'white' : '#0d121b',
+                          borderRadius: '1.25rem',
+                          borderTopLeftRadius: !isUser && showAvatar ? '0.25rem' : '1.25rem',
+                          borderTopRightRadius: isUser && showAvatar ? '0.25rem' : '1.25rem',
+                            fontSize: '1.5rem',
+                          lineHeight: '1.6',
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-word',
+                          boxShadow: isUser
+                            ? '0 2px 8px rgba(40, 77, 117, 0.2)'
+                            : '0 1px 3px rgba(0,0,0,0.08)',
+                          border: isUser ? 'none' : '1px solid var(--border-color)',
+                          maxWidth: '100%'
+                        }}>
+                          {m.content}
                         </div>
                       </div>
-                    )
+                    </div>
+                  )
                   })}
 
                   {/* 세종대왕 생각 중 표시 */}
@@ -3250,7 +3308,7 @@ function App() {
                           e.preventDefault()
                           const data = e.dataTransfer.getData('text/plain')
                           try {
-                            const draggedData = JSON.parse(data)
+                          const draggedData = JSON.parse(data)
                             // 이제 ID 체크 없이 무엇이든 드롭 허용
                             setDroppedItems(prev => ({
                               ...prev,
@@ -3307,13 +3365,13 @@ function App() {
                         </div>
 
                         {/* 이름 드롭 영역 */}
-                        <div style={{
+                          <div style={{
                           width: '100%',
                           minHeight: '50px',
                           background: droppedName 
                             ? (showLearnFeedback ? (isNameCorrect ? '#e8f5e9' : '#ffebee') : '#f0f4ff') 
                             : '#f5f5f5',
-                          borderRadius: '0.8rem',
+                            borderRadius: '0.8rem',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -3322,7 +3380,7 @@ function App() {
                             : '2px dashed #ccc',
                           padding: '0.4rem',
                           fontSize: '1.2rem',
-                          fontWeight: 700,
+                              fontWeight: 700,
                           color: droppedName 
                             ? (showLearnFeedback ? (isNameCorrect ? '#2e7d32' : '#c62828') : '#283593') 
                             : '#999',
@@ -3342,16 +3400,16 @@ function App() {
                           }
                         }}>
                           {droppedName ? (showLearnFeedback ? (isNameCorrect ? `✓ ${droppedName.text}` : `✕ ${droppedName.text}`) : droppedName.text) : '이름 놓기'}
-                        </div>
+                            </div>
 
                         {/* 설명 드롭 영역 */}
-                        <div style={{
+                            <div style={{
                           width: '100%',
                           minHeight: '70px',
                           background: droppedDesc 
                             ? (showLearnFeedback ? (isDescCorrect ? '#e8f5e9' : '#ffebee') : '#f0f4ff') 
                             : '#f5f5f5',
-                          borderRadius: '0.8rem',
+                            borderRadius: '0.8rem',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -3380,7 +3438,7 @@ function App() {
                           }
                         }}>
                           {droppedDesc ? (showLearnFeedback ? (isDescCorrect ? droppedDesc.text : `✕ ${droppedDesc.text}`) : droppedDesc.text) : '설명 놓기'}
-                        </div>
+                          </div>
                       </div>
                     )
                   })}
