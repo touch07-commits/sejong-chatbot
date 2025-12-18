@@ -109,10 +109,10 @@ function App() {
   // @ts-ignore - setLearnResults에서 사용
   const [learnResults, setLearnResults] = useState<LearnResult[]>([])
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([])
-  const [_droppedItems, setDroppedItems] = useState<Record<string, { name: string; description: string } | null>>({})
+  const [_droppedItems, setDroppedItems] = useState<Record<string, { name?: string; description?: string }>>({})
   const [_draggedItem, _setDraggedItem] = useState<{ name: string; description: string } | null>(null)
   const [currentPage, setCurrentPage] = useState(0)
-  const [_shuffledDragItems, setShuffledDragItems] = useState<LearnItem[]>([])
+  const [_shuffledDragItems, setShuffledDragItems] = useState<Array<{ id: string; type: 'name' | 'description'; text: string }>>([])
   // @ts-ignore - setIsDragging에서 사용
   const [_isDragging, _setIsDragging] = useState(false)
   const [_showSuccessMessage, _setShowSuccessMessage] = useState(false)
@@ -1176,8 +1176,8 @@ function App() {
     if (mode === 'learn') {
       const items: LearnItem[] = [
         { id: '1', icon: '/hunmin.png', name: '훈민정음', description: '우리말을 쓸 수 있도록 한글을 만들어냈어요.' },
-        { id: '2', icon: '/chkugi.png', name: '측우기', description: '비의 양을 재는 측우기를 만들어 농사에 도움을 줬어요.' },
-        { id: '3', icon: '/haesigye.png', name: '앙부일구', description: '시간을 정확히 알 수 있는 해시계를 만들었어요.' }
+        { id: '2', icon: '/haesigye.png', name: '해시계 (앙부일구)', description: '시간을 정확히 알 수 있는 해시계를 만들었어요.' },
+        { id: '3', icon: '/chkugi.png', name: '측우기', description: '비의 양을 재는 측우기를 만들어 농사에 도움을 줬어요.' }
       ]
       setAllLearnItems(items)
       setCurrentPage(0)
@@ -1185,17 +1185,25 @@ function App() {
     }
   }, [mode])
 
-  // 현재 페이지의 4개 항목만 표시
+  // 현재 페이지의 항목 표시 및 드래그 아이템 섞기
   useEffect(() => {
     if (mode === 'learn' && allLearnItems.length > 0) {
       const startIndex = currentPage * 4
       const endIndex = startIndex + 4
       const currentItems = allLearnItems.slice(startIndex, endIndex)
       setLearnItems(currentItems)
+      
       // 현재 페이지의 드롭 상태 초기화 (페이지 변경 시에만)
       setDroppedItems({})
-      // 드래그 아이템 순서 섞기 (페이지 변경 시에만)
-      const shuffled = [...currentItems].sort(() => Math.random() - 0.5)
+      
+      // 드래그 아이템 (이름과 설명을 분리하여 섞기)
+      const dragItems: Array<{ id: string; type: 'name' | 'description'; text: string }> = []
+      currentItems.forEach(item => {
+        dragItems.push({ id: item.id, type: 'name', text: item.name })
+        dragItems.push({ id: item.id, type: 'description', text: item.description })
+      })
+      
+      const shuffled = [...dragItems].sort(() => Math.random() - 0.5)
       setShuffledDragItems(shuffled)
     }
   }, [mode, allLearnItems, currentPage])
@@ -2906,6 +2914,9 @@ function App() {
                       '2': '#e3f2fd',
                       '3': '#f3e5f5'
                     }
+                    const isNameDropped = !!_droppedItems[item.id]?.name;
+                    const isDescDropped = !!_droppedItems[item.id]?.description;
+
                     return (
                       <div
                         key={item.id}
@@ -2913,26 +2924,34 @@ function App() {
                         onDrop={(e) => {
                           e.preventDefault()
                           const data = e.dataTransfer.getData('text/plain')
-                          const draggedData = JSON.parse(data)
-                          if (draggedData.id === item.id) {
-                            setDroppedItems(prev => ({
-                              ...prev,
-                              [item.id]: { name: item.name, description: item.description }
-                            }))
+                          try {
+                            const draggedData = JSON.parse(data)
+                            if (draggedData.id === item.id) {
+                              setDroppedItems(prev => ({
+                                ...prev,
+                                [item.id]: { 
+                                  ...prev[item.id],
+                                  [draggedData.type]: draggedData.text 
+                                }
+                              }))
+                            }
+                          } catch (err) {
+                            console.error('Drop error:', err)
                           }
                         }}
                         style={{
                           background: 'white',
-                          border: _droppedItems[item.id] ? '3px solid #4caf50' : '3px dashed #ddd',
+                          border: (isNameDropped && isDescDropped) ? '3px solid #4caf50' : '3px dashed #ddd',
                           borderRadius: '1.2rem',
                           padding: '1.5rem',
                           textAlign: 'center',
                           transition: 'all 0.3s',
-                          minHeight: '320px',
+                          minHeight: '380px',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
-                          justifyContent: 'space-between'
+                          justifyContent: 'flex-start',
+                          gap: '1rem'
                         }}
                       >
                         {/* 이미지 */}
@@ -2945,7 +2964,7 @@ function App() {
                           alignItems: 'center',
                           justifyContent: 'center',
                           overflow: 'hidden',
-                          marginBottom: '1rem'
+                          flexShrink: 0
                         }}>
                           <img
                             src={item.icon}
@@ -2958,42 +2977,41 @@ function App() {
                           />
                         </div>
 
-                        {/* 드롭된 내용 표시 */}
-                        {_droppedItems[item.id] ? (
-                          <div style={{
-                            background: '#e8f5e9',
-                            borderRadius: '0.8rem',
-                            padding: '1rem',
-                            width: '100%'
-                          }}>
-                            <div style={{
-                              fontSize: '1.1rem',
-                              fontWeight: 700,
-                              color: '#2e7d32',
-                              marginBottom: '0.5rem'
-                            }}>
-                              ✓ {_droppedItems[item.id]?.name}
-                            </div>
-                            <div style={{
-                              fontSize: '0.85rem',
-                              color: '#555',
-                              lineHeight: 1.4
-                            }}>
-                              {_droppedItems[item.id]?.description}
-                            </div>
-                          </div>
-                        ) : (
-                          <div style={{
-                            color: '#999',
-                            fontSize: '0.9rem',
-                            padding: '1rem',
-                            border: '2px dashed #e0e0e0',
-                            borderRadius: '0.8rem',
-                            width: '100%'
-                          }}>
-                            여기에 드래그하세요
-                          </div>
-                        )}
+                        {/* 이름 드롭 영역 */}
+                        <div style={{
+                          width: '100%',
+                          minHeight: '50px',
+                          background: isNameDropped ? '#e8f5e9' : '#f5f5f5',
+                          borderRadius: '0.8rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: isNameDropped ? '2px solid #4caf50' : '2px dashed #ccc',
+                          padding: '0.5rem',
+                          fontSize: '1.1rem',
+                          fontWeight: 700,
+                          color: isNameDropped ? '#2e7d32' : '#999'
+                        }}>
+                          {isNameDropped ? `✓ ${_droppedItems[item.id].name}` : '이름을 놓아주세요'}
+                        </div>
+
+                        {/* 설명 드롭 영역 */}
+                        <div style={{
+                          width: '100%',
+                          minHeight: '80px',
+                          background: isDescDropped ? '#e8f5e9' : '#f5f5f5',
+                          borderRadius: '0.8rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          border: isDescDropped ? '2px solid #4caf50' : '2px dashed #ccc',
+                          padding: '0.8rem',
+                          fontSize: '0.85rem',
+                          lineHeight: 1.4,
+                          color: isDescDropped ? '#555' : '#999'
+                        }}>
+                          {isDescDropped ? _droppedItems[item.id].description : '설명을 놓아주세요'}
+                        </div>
                       </div>
                     )
                   })}
@@ -3023,60 +3041,56 @@ function App() {
                     fontSize: '0.9rem',
                     color: '#666'
                   }}>
-                    이름과 설명이 함께 있는 카드를 드래그해서 올바른 이미지에 놓아보세요!
+                    이름과 설명을 각각 알맞은 이미지에 드래그해 보세요!
                   </p>
                 </div>
 
                 <div style={{
                   display: 'flex',
-                  gap: '1.5rem',
+                  gap: '1rem',
                   justifyContent: 'center',
                   flexWrap: 'wrap'
                 }}>
-                  {(_shuffledDragItems.length > 0 ? _shuffledDragItems : allLearnItems)
-                    .filter(item => !_droppedItems[item.id])
-                    .map((item) => (
+                  {_shuffledDragItems
+                    .filter(item => !_droppedItems[item.id]?.[item.type])
+                    .map((item, idx) => (
                       <div
-                        key={item.id}
+                        key={`${item.id}-${item.type}-${idx}`}
                         draggable
                         onDragStart={(e) => {
-                          e.dataTransfer.setData('text/plain', JSON.stringify({ id: item.id, name: item.name, description: item.description }))
+                          e.dataTransfer.setData('text/plain', JSON.stringify(item))
                         }}
                         style={{
-                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                          background: item.type === 'name' 
+                            ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                            : 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)',
                           color: 'white',
-                          padding: '1.2rem 1.5rem',
+                          padding: '1rem 1.2rem',
                           borderRadius: '1rem',
                           cursor: 'grab',
-                          boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                           transition: 'all 0.2s',
-                          minWidth: '200px',
-                          maxWidth: '250px'
+                          width: item.type === 'name' ? '160px' : '220px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          textAlign: 'center'
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.transform = 'translateY(-4px)'
-                          e.currentTarget.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.5)'
+                          e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)'
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.transform = 'translateY(0)'
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)'
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'
                         }}
                       >
                         <div style={{
-                          fontSize: '1.1rem',
-                          fontWeight: 700,
-                          marginBottom: '0.5rem',
-                          textAlign: 'center'
+                          fontSize: item.type === 'name' ? '1.1rem' : '0.85rem',
+                          fontWeight: item.type === 'name' ? 700 : 500,
+                          lineHeight: 1.4
                         }}>
-                          {item.name}
-                        </div>
-                        <div style={{
-                          fontSize: '0.85rem',
-                          opacity: 0.95,
-                          lineHeight: 1.4,
-                          textAlign: 'center'
-                        }}>
-                          {item.description}
+                          {item.text}
                         </div>
                       </div>
                     ))}
@@ -3084,7 +3098,7 @@ function App() {
               </div>
 
               {/* 완료 메시지 */}
-              {Object.keys(_droppedItems).length === allLearnItems.length && allLearnItems.length > 0 && (
+              {allLearnItems.length > 0 && allLearnItems.every(item => _droppedItems[item.id]?.name && _droppedItems[item.id]?.description) && (
                 <div style={{
                   background: 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)',
                   borderRadius: '1.5rem',
