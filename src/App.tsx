@@ -2416,7 +2416,7 @@ function App() {
                   />
                 </div>
                 <div>
-                  <h2 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 700, color: '#0d121b' }}>
+                  <h2 style={{ margin: 0, fontSize: '2rem', fontWeight: 700, color: '#0d121b' }}>
                     세종대왕님
                   </h2>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.2rem' }}>
@@ -2427,7 +2427,7 @@ function App() {
                       borderRadius: '50%',
                       animation: submitting ? 'pulse 2s ease-in-out infinite' : 'none'
                     }}></span>
-                    <span style={{ fontSize: '0.75rem', color: '#666', fontWeight: 600 }}>
+                    <span style={{ fontSize: '1rem', color: '#666', fontWeight: 600 }}>
                       {submitting ? '답변 작성 중...' : '온라인'}
                     </span>
                   </div>
@@ -2449,7 +2449,7 @@ function App() {
                   textAlign: 'center',
                   padding: '3rem 1rem',
                   color: '#999',
-                  fontSize: '1rem'
+                  fontSize: '1.2rem'
                 }}>
                   <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>💬</div>
                   <p style={{ margin: 0, fontWeight: 600 }}>세종대왕과 대화를 시작해보세요!</p>
@@ -2480,7 +2480,7 @@ function App() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontSize: '0.9rem',
+                          fontSize: '1.1rem',
                           fontWeight: 800,
                           flexShrink: 0,
                           border: '2px solid white',
@@ -2518,7 +2518,7 @@ function App() {
                         {showAvatar && (
                           <p style={{
                             margin: '0 0 0.25rem 0',
-                            fontSize: '0.75rem',
+                            fontSize: '0.9rem',
                             fontWeight: 600,
                             color: '#666',
                             paddingLeft: isUser ? 0 : '0.25rem',
@@ -2536,7 +2536,7 @@ function App() {
                           borderRadius: '1.25rem',
                           borderTopLeftRadius: !isUser && showAvatar ? '0.25rem' : '1.25rem',
                           borderTopRightRadius: isUser && showAvatar ? '0.25rem' : '1.25rem',
-                          fontSize: '1rem',
+                          fontSize: '1.2rem',
                           lineHeight: '1.6',
                           whiteSpace: 'pre-wrap',
                           wordBreak: 'break-word',
@@ -2619,7 +2619,7 @@ function App() {
                       background: 'transparent',
                       border: 'none',
                       outline: 'none',
-                      fontSize: '1rem',
+                      fontSize: '1.25rem',
                       padding: '1rem 0.75rem',
                       resize: 'none',
                       minHeight: '56px',
@@ -2877,7 +2877,7 @@ function App() {
                 textAlign: 'center'
               }}>
                 <h1 style={{
-                  fontSize: '2rem',
+                  fontSize: '2.5rem',
                   fontWeight: 800,
                   marginBottom: '0.8rem',
                   color: '#1976d2'
@@ -2885,7 +2885,7 @@ function App() {
                   🎯 세종대왕의 하신 일 알아보기
                 </h1>
                 <p style={{
-                  fontSize: '1.1rem',
+                  fontSize: '1.4rem',
                   color: '#666',
                   lineHeight: 1.6
                 }}>
@@ -2980,7 +2980,7 @@ function App() {
                         {/* 이름 드롭 영역 */}
                         <div style={{
                           width: '100%',
-                          minHeight: '50px',
+                          minHeight: '60px',
                           background: isNameDropped ? '#e8f5e9' : '#f5f5f5',
                           borderRadius: '0.8rem',
                           display: 'flex',
@@ -2988,7 +2988,7 @@ function App() {
                           justifyContent: 'center',
                           border: isNameDropped ? '2px solid #4caf50' : '2px dashed #ccc',
                           padding: '0.5rem',
-                          fontSize: '1.1rem',
+                          fontSize: '1.3rem',
                           fontWeight: 700,
                           color: isNameDropped ? '#2e7d32' : '#999'
                         }}>
@@ -2998,7 +2998,7 @@ function App() {
                         {/* 설명 드롭 영역 */}
                         <div style={{
                           width: '100%',
-                          minHeight: '80px',
+                          minHeight: '90px',
                           background: isDescDropped ? '#e8f5e9' : '#f5f5f5',
                           borderRadius: '0.8rem',
                           display: 'flex',
@@ -3006,7 +3006,7 @@ function App() {
                           justifyContent: 'center',
                           border: isDescDropped ? '2px solid #4caf50' : '2px dashed #ccc',
                           padding: '0.8rem',
-                          fontSize: '0.85rem',
+                          fontSize: '1.1rem',
                           lineHeight: 1.4,
                           color: isDescDropped ? '#555' : '#999'
                         }}>
@@ -3065,12 +3065,12 @@ function App() {
                             ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
                             : 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)',
                           color: 'white',
-                          padding: '1rem 1.2rem',
+                          padding: '1.2rem 1.5rem',
                           borderRadius: '1rem',
                           cursor: 'grab',
                           boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
                           transition: 'all 0.2s',
-                          width: item.type === 'name' ? '160px' : '220px',
+                          width: item.type === 'name' ? '180px' : '280px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -3086,7 +3086,7 @@ function App() {
                         }}
                       >
                         <div style={{
-                          fontSize: item.type === 'name' ? '1.1rem' : '0.85rem',
+                          fontSize: item.type === 'name' ? '1.3rem' : '1.1rem',
                           fontWeight: item.type === 'name' ? 700 : 500,
                           lineHeight: 1.4
                         }}>
