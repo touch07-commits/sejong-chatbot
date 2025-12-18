@@ -229,13 +229,6 @@ function App() {
   // 학생 목록 초기 불러오기
   useEffect(() => {
     fetchStudentList()
-    
-    // 이미 로그인된 상태라면 역할 확인
-    if (student && !userRole) {
-      getUserRole(student.uid).then(role => {
-        if (role) setUserRole(role)
-      })
-    }
   }, [student])
 
   // Firebase 인증 상태 확인 및 학생 정보 로드
@@ -258,16 +251,6 @@ function App() {
           photoURL: user.photoURL || undefined
         }
         setStudent(studentData)
-        
-        // 사용자 역할(교사/학생) 불러오기
-        try {
-          const role = await getUserRole(user.uid)
-          if (role) {
-            setUserRole(role)
-          }
-        } catch (e) {
-          console.error('Failed to get user role:', e)
-        }
         
         // 학생 목록에 추가/업데이트
         try {
