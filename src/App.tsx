@@ -110,7 +110,10 @@ function App() {
   // @ts-ignore - setLearnResults에서 사용
   const [learnResults, setLearnResults] = useState<LearnResult[]>([])
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([])
-  const [_droppedItems, setDroppedItems] = useState<Record<string, { name?: string; description?: string }>>({})
+  const [_droppedItems, setDroppedItems] = useState<Record<string, { 
+    name?: { text: string; sourceId: string }; 
+    description?: { text: string; sourceId: string }; 
+  }>>({})
   const [_draggedItem, _setDraggedItem] = useState<{ name: string; description: string } | null>(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [_shuffledDragItems, setShuffledDragItems] = useState<Array<{ id: string; type: 'name' | 'description'; text: string }>>([])
@@ -119,6 +122,7 @@ function App() {
   const [_showSuccessMessage, _setShowSuccessMessage] = useState(false)
   const [_successMessage, _setSuccessMessage] = useState('')
   const [learnSaved, setLearnSaved] = useState(false)
+  const [showLearnFeedback, setShowLearnFeedback] = useState(false)
   
   // 글자꾸미기 관련
   const [decoratedLetters, setDecoratedLetters] = useState<{ id: string; letter: string; dataUrl: string; createdAt: string }[]>([])
@@ -1185,6 +1189,7 @@ function App() {
       setCurrentPage(0)
       setDroppedItems({})
       setLearnSaved(false)
+      setShowLearnFeedback(false)
     }
   }, [mode])
 
@@ -1211,18 +1216,17 @@ function App() {
     }
   }, [mode, allLearnItems, currentPage])
 
-  // 학습 결과 저장 로직 (이름/설명 매칭이 모두 완료되었을 때)
+  // 학습 결과 저장 로직 (이름/설명 매칭이 모두 완료되고 정답 확인을 눌렀을 때)
   useEffect(() => {
-    // 학생이고, 학습 모드이며, 아직 저장되지 않았을 때
-    if (mode === 'learn' && allLearnItems.length > 0 && !learnSaved && student && userRole !== 'teacher') {
-      // 모든 항목이 이름과 설명이 모두 채워졌는지 확인
-      const isComplete = allLearnItems.every(item => 
-        _droppedItems[item.id] && 
-        _droppedItems[item.id].name && 
-        _droppedItems[item.id].description
+    // 학생이고, 학습 모드이며, 정답 확인 상태이고, 아직 저장되지 않았을 때
+    if (mode === 'learn' && allLearnItems.length > 0 && showLearnFeedback && !learnSaved && student && userRole !== 'teacher') {
+      // 모든 항목이 올바르게 채워졌는지 확인
+      const isAllCorrect = allLearnItems.every(item => 
+        _droppedItems[item.id]?.name?.sourceId === item.id && 
+        _droppedItems[item.id]?.description?.sourceId === item.id
       )
       
-      if (isComplete) {
+      if (isAllCorrect) {
         const result: LearnResult = {
           id: Date.now().toString(),
           completedAt: new Date().toISOString(),
@@ -1231,7 +1235,6 @@ function App() {
         
         saveLearnResult(student.uid, result).then(() => {
           setLearnSaved(true);
-          // 저장 후 목록 갱신을 위해 학습 결과를 다시 불러오도록 트리거할 수 있음
           getLearnResults(student.uid).then(results => {
             setLearnResults(results);
           });
@@ -1240,7 +1243,7 @@ function App() {
         })
       }
     }
-  }, [mode, allLearnItems, _droppedItems, learnSaved, student, userRole])
+  }, [mode, allLearnItems, _droppedItems, learnSaved, showLearnFeedback, student, userRole])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -3058,8 +3061,11 @@ function App() {
                       '2': '#e3f2fd',
                       '3': '#f3e5f5'
                     }
-                    const isNameDropped = !!_droppedItems[item.id]?.name;
-                    const isDescDropped = !!_droppedItems[item.id]?.description;
+                    const droppedName = _droppedItems[item.id]?.name;
+                    const droppedDesc = _droppedItems[item.id]?.description;
+                    
+                    const isNameCorrect = droppedName?.sourceId === item.id;
+                    const isDescCorrect = droppedDesc?.sourceId === item.id;
 
                     return (
                       <div
@@ -3070,22 +3076,25 @@ function App() {
                           const data = e.dataTransfer.getData('text/plain')
                           try {
                             const draggedData = JSON.parse(data)
-                            if (draggedData.id === item.id) {
-                              setDroppedItems(prev => ({
-                                ...prev,
-                                [item.id]: { 
-                                  ...prev[item.id],
-                                  [draggedData.type]: draggedData.text 
-                                }
-                              }))
-                            }
+                            // 이제 ID 체크 없이 무엇이든 드롭 허용
+                            setDroppedItems(prev => ({
+                              ...prev,
+                              [item.id]: { 
+                                ...prev[item.id],
+                                [draggedData.type]: { text: draggedData.text, sourceId: draggedData.id }
+                              }
+                            }))
+                            // 드롭하면 피드백 초기화 (다시 확인하도록)
+                            setShowLearnFeedback(false)
                           } catch (err) {
                             console.error('Drop error:', err)
                           }
                         }}
                         style={{
                           background: 'white',
-                          border: (isNameDropped && isDescDropped) ? '3px solid #4caf50' : '2px dashed #ddd',
+                          border: showLearnFeedback 
+                            ? (isNameCorrect && isDescCorrect ? '3px solid #4caf50' : '3px solid #f44336')
+                            : '2px dashed #ddd',
                           borderRadius: '1.2rem',
                           padding: '1.2rem',
                           textAlign: 'center',
@@ -3095,7 +3104,8 @@ function App() {
                           flexDirection: 'column',
                           alignItems: 'center',
                           justifyContent: 'flex-start',
-                          gap: '0.8rem'
+                          gap: '0.8rem',
+                          position: 'relative'
                         }}
                       >
                         {/* 이미지 */}
@@ -3125,36 +3135,76 @@ function App() {
                         <div style={{
                           width: '100%',
                           minHeight: '50px',
-                          background: isNameDropped ? '#e8f5e9' : '#f5f5f5',
+                          background: droppedName 
+                            ? (showLearnFeedback ? (isNameCorrect ? '#e8f5e9' : '#ffebee') : '#f0f4ff') 
+                            : '#f5f5f5',
                           borderRadius: '0.8rem',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          border: isNameDropped ? '2px solid #4caf50' : '2px dashed #ccc',
+                          border: droppedName 
+                            ? (showLearnFeedback ? `2px solid ${isNameCorrect ? '#4caf50' : '#f44336'}` : '2px solid #5c6bc0') 
+                            : '2px dashed #ccc',
                           padding: '0.4rem',
                           fontSize: '1.2rem',
                           fontWeight: 700,
-                          color: isNameDropped ? '#2e7d32' : '#999'
+                          color: droppedName 
+                            ? (showLearnFeedback ? (isNameCorrect ? '#2e7d32' : '#c62828') : '#283593') 
+                            : '#999',
+                          cursor: droppedName ? 'pointer' : 'default'
+                        }}
+                        onClick={() => {
+                          // 클릭 시 항목 제거
+                          if (droppedName) {
+                            setDroppedItems(prev => {
+                              const next = { ...prev }
+                              const slot = { ...next[item.id] }
+                              delete slot.name
+                              next[item.id] = slot
+                              return next
+                            })
+                            setShowLearnFeedback(false)
+                          }
                         }}>
-                          {isNameDropped ? `✓ ${_droppedItems[item.id].name}` : '이름 놓기'}
+                          {droppedName ? (showLearnFeedback ? (isNameCorrect ? `✓ ${droppedName.text}` : `✕ ${droppedName.text}`) : droppedName.text) : '이름 놓기'}
                         </div>
 
                         {/* 설명 드롭 영역 */}
                         <div style={{
                           width: '100%',
                           minHeight: '70px',
-                          background: isDescDropped ? '#e8f5e9' : '#f5f5f5',
+                          background: droppedDesc 
+                            ? (showLearnFeedback ? (isDescCorrect ? '#e8f5e9' : '#ffebee') : '#f0f4ff') 
+                            : '#f5f5f5',
                           borderRadius: '0.8rem',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          border: isDescDropped ? '2px solid #4caf50' : '2px dashed #ccc',
+                          border: droppedDesc 
+                            ? (showLearnFeedback ? `2px solid ${isDescCorrect ? '#4caf50' : '#f44336'}` : '2px solid #5c6bc0') 
+                            : '2px dashed #ccc',
                           padding: '0.6rem',
                           fontSize: '1rem',
                           lineHeight: 1.3,
-                          color: isDescDropped ? '#555' : '#999'
+                          color: droppedDesc 
+                            ? (showLearnFeedback ? (isDescCorrect ? '#555' : '#c62828') : '#444') 
+                            : '#999',
+                          cursor: droppedDesc ? 'pointer' : 'default'
+                        }}
+                        onClick={() => {
+                          // 클릭 시 항목 제거
+                          if (droppedDesc) {
+                            setDroppedItems(prev => {
+                              const next = { ...prev }
+                              const slot = { ...next[item.id] }
+                              delete slot.description
+                              next[item.id] = slot
+                              return next
+                            })
+                            setShowLearnFeedback(false)
+                          }
                         }}>
-                          {isDescDropped ? _droppedItems[item.id].description : '설명 놓기'}
+                          {droppedDesc ? (showLearnFeedback ? (isDescCorrect ? droppedDesc.text : `✕ ${droppedDesc.text}`) : droppedDesc.text) : '설명 놓기'}
                         </div>
                       </div>
                     )
@@ -3181,16 +3231,26 @@ function App() {
                   }}>
                     아래 카드를 드래그하여 위 이미지와 맞춰보세요
                   </h3>
+                  <p style={{ fontSize: '0.9rem', color: '#888' }}>
+                    잘못 놓았다면 카드를 클릭해서 뺄 수 있어요!
+                  </p>
                 </div>
 
                 <div style={{
                   display: 'flex',
                   gap: '0.8rem',
                   justifyContent: 'center',
-                  flexWrap: 'wrap'
+                  flexWrap: 'wrap',
+                  marginBottom: '1.5rem'
                 }}>
                   {_shuffledDragItems
-                    .filter(item => !_droppedItems[item.id]?.[item.type])
+                    .filter(dragItem => {
+                      // 현재 보드에 이미 올라가 있는 텍스트는 제외
+                      return !Object.values(_droppedItems).some(slot => 
+                        (dragItem.type === 'name' && slot.name?.text === dragItem.text) ||
+                        (dragItem.type === 'description' && slot.description?.text === dragItem.text)
+                      )
+                    })
                     .map((item, idx) => (
                       <div
                         key={`${item.id}-${item.type}-${idx}`}
@@ -3231,10 +3291,38 @@ function App() {
                       </div>
                     ))}
                 </div>
+
+                {/* 정답 확인 버튼 */}
+                <div style={{ textAlign: 'center' }}>
+                  {Object.values(_droppedItems).some(d => d.name || d.description) && !learnSaved && (
+                    <button
+                      onClick={() => setShowLearnFeedback(true)}
+                      style={{
+                        background: 'var(--traditional-green)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '0.8rem 2rem',
+                        borderRadius: '0.8rem',
+                        fontSize: '1.2rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(74, 112, 96, 0.2)',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    >
+                      정답 확인하기
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* 완료 메시지 */}
-              {allLearnItems.length > 0 && allLearnItems.every(item => _droppedItems[item.id]?.name && _droppedItems[item.id]?.description) && (
+              {allLearnItems.length > 0 && allLearnItems.every(item => 
+                _droppedItems[item.id]?.name?.sourceId === item.id && 
+                _droppedItems[item.id]?.description?.sourceId === item.id
+              ) && showLearnFeedback && (
                 <div style={{
                   background: 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)',
                   borderRadius: '1.2rem',
@@ -3262,6 +3350,7 @@ function App() {
                     onClick={() => {
                       setDroppedItems({})
                       setLearnSaved(false)
+                      setShowLearnFeedback(false)
                     }}
                     style={{
                       background: 'white',
