@@ -2861,33 +2861,33 @@ function App() {
             flex: 1,
             overflow: 'auto',
             background: '#f6f8fc',
-            padding: '2rem'
+            padding: '1rem'
           }}>
             <div style={{
-              maxWidth: '900px',
+              maxWidth: '1000px',
               margin: '0 auto'
             }}>
               {/* 헤더 섹션 */}
               <div style={{
                 background: 'white',
-                borderRadius: '1.5rem',
-                padding: '2.5rem',
-                marginBottom: '2rem',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                borderRadius: '1.2rem',
+                padding: '1.5rem',
+                marginBottom: '1rem',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                 textAlign: 'center'
               }}>
                 <h1 style={{
-                  fontSize: '2.5rem',
+                  fontSize: '2rem',
                   fontWeight: 800,
-                  marginBottom: '0.8rem',
+                  marginBottom: '0.4rem',
                   color: '#1976d2'
                 }}>
                   🎯 세종대왕의 하신 일 알아보기
                 </h1>
                 <p style={{
-                  fontSize: '1.4rem',
+                  fontSize: '1.2rem',
                   color: '#666',
-                  lineHeight: 1.6
+                  lineHeight: 1.4
                 }}>
                   각 이미지에 맞는 이름과 설명을 드래그하여 연결해보세요!
                 </p>
@@ -2896,17 +2896,17 @@ function App() {
               {/* 드래그&드롭 게임 섹션 */}
               <div style={{
                 background: 'white',
-                borderRadius: '1.5rem',
-                padding: '3rem',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-                marginBottom: '2rem'
+                borderRadius: '1.2rem',
+                padding: '1.5rem 2rem',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                marginBottom: '1rem'
               }}>
                 {/* 이미지 카드들 (드롭 존) */}
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: '2rem',
-                  marginBottom: '3rem'
+                  gap: '1.5rem',
+                  marginBottom: '1.5rem'
                 }}>
                   {allLearnItems.map((item) => {
                     const bgColors: Record<string, string> = {
@@ -2941,23 +2941,23 @@ function App() {
                         }}
                         style={{
                           background: 'white',
-                          border: (isNameDropped && isDescDropped) ? '3px solid #4caf50' : '3px dashed #ddd',
+                          border: (isNameDropped && isDescDropped) ? '3px solid #4caf50' : '2px dashed #ddd',
                           borderRadius: '1.2rem',
-                          padding: '1.5rem',
+                          padding: '1.2rem',
                           textAlign: 'center',
                           transition: 'all 0.3s',
-                          minHeight: '380px',
+                          minHeight: '300px',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
                           justifyContent: 'flex-start',
-                          gap: '1rem'
+                          gap: '0.8rem'
                         }}
                       >
                         {/* 이미지 */}
                         <div style={{
-                          width: '140px',
-                          height: '140px',
+                          width: '120px',
+                          height: '120px',
                           background: bgColors[item.id] || '#f5f5f5',
                           borderRadius: '1rem',
                           display: 'flex',
@@ -2980,37 +2980,37 @@ function App() {
                         {/* 이름 드롭 영역 */}
                         <div style={{
                           width: '100%',
-                          minHeight: '60px',
+                          minHeight: '50px',
                           background: isNameDropped ? '#e8f5e9' : '#f5f5f5',
                           borderRadius: '0.8rem',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           border: isNameDropped ? '2px solid #4caf50' : '2px dashed #ccc',
-                          padding: '0.5rem',
-                          fontSize: '1.3rem',
+                          padding: '0.4rem',
+                          fontSize: '1.2rem',
                           fontWeight: 700,
                           color: isNameDropped ? '#2e7d32' : '#999'
                         }}>
-                          {isNameDropped ? `✓ ${_droppedItems[item.id].name}` : '이름을 놓아주세요'}
+                          {isNameDropped ? `✓ ${_droppedItems[item.id].name}` : '이름 놓기'}
                         </div>
 
                         {/* 설명 드롭 영역 */}
                         <div style={{
                           width: '100%',
-                          minHeight: '90px',
+                          minHeight: '70px',
                           background: isDescDropped ? '#e8f5e9' : '#f5f5f5',
                           borderRadius: '0.8rem',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           border: isDescDropped ? '2px solid #4caf50' : '2px dashed #ccc',
-                          padding: '0.8rem',
-                          fontSize: '1.1rem',
-                          lineHeight: 1.4,
+                          padding: '0.6rem',
+                          fontSize: '1rem',
+                          lineHeight: 1.3,
                           color: isDescDropped ? '#555' : '#999'
                         }}>
-                          {isDescDropped ? _droppedItems[item.id].description : '설명을 놓아주세요'}
+                          {isDescDropped ? _droppedItems[item.id].description : '설명 놓기'}
                         </div>
                       </div>
                     )
@@ -3019,35 +3019,29 @@ function App() {
 
                 {/* 구분선 */}
                 <div style={{
-                  height: '2px',
-                  background: 'linear-gradient(to right, transparent, #ddd, transparent)',
-                  margin: '2rem 0'
+                  height: '1px',
+                  background: '#eee',
+                  margin: '1rem 0'
                 }}></div>
 
                 {/* 드래그 가능한 항목들 */}
                 <div style={{
                   textAlign: 'center',
-                  marginBottom: '1.5rem'
+                  marginBottom: '1rem'
                 }}>
                   <h3 style={{
-                    fontSize: '1.2rem',
+                    fontSize: '1.1rem',
                     fontWeight: 700,
                     color: '#333',
-                    marginBottom: '0.5rem'
+                    marginBottom: '0.3rem'
                   }}>
                     아래 카드를 드래그하여 위 이미지와 맞춰보세요
                   </h3>
-                  <p style={{
-                    fontSize: '0.9rem',
-                    color: '#666'
-                  }}>
-                    이름과 설명을 각각 알맞은 이미지에 드래그해 보세요!
-                  </p>
                 </div>
 
                 <div style={{
                   display: 'flex',
-                  gap: '1rem',
+                  gap: '0.8rem',
                   justifyContent: 'center',
                   flexWrap: 'wrap'
                 }}>
@@ -3065,30 +3059,28 @@ function App() {
                             ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
                             : 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)',
                           color: 'white',
-                          padding: '1.2rem 1.5rem',
-                          borderRadius: '1rem',
+                          padding: '0.8rem 1.2rem',
+                          borderRadius: '0.8rem',
                           cursor: 'grab',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                          boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
                           transition: 'all 0.2s',
-                          width: item.type === 'name' ? '180px' : '280px',
+                          width: item.type === 'name' ? '150px' : '240px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           textAlign: 'center'
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'translateY(-4px)'
-                          e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)'
+                          e.currentTarget.style.transform = 'translateY(-2px)'
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.transform = 'translateY(0)'
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'
                         }}
                       >
                         <div style={{
-                          fontSize: item.type === 'name' ? '1.3rem' : '1.1rem',
+                          fontSize: item.type === 'name' ? '1.2rem' : '1rem',
                           fontWeight: item.type === 'name' ? 700 : 500,
-                          lineHeight: 1.4
+                          lineHeight: 1.3
                         }}>
                           {item.text}
                         </div>
@@ -3101,24 +3093,24 @@ function App() {
               {allLearnItems.length > 0 && allLearnItems.every(item => _droppedItems[item.id]?.name && _droppedItems[item.id]?.description) && (
                 <div style={{
                   background: 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)',
-                  borderRadius: '1.5rem',
-                  padding: '2rem',
+                  borderRadius: '1.2rem',
+                  padding: '1.5rem',
                   textAlign: 'center',
                   color: 'white',
-                  marginBottom: '2rem',
-                  boxShadow: '0 8px 24px rgba(76, 175, 80, 0.3)'
+                  marginBottom: '1rem',
+                  boxShadow: '0 4px 12px rgba(76, 175, 80, 0.2)'
                 }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎉</div>
+                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🎉</div>
                   <h2 style={{
-                    fontSize: '1.8rem',
+                    fontSize: '1.5rem',
                     fontWeight: 800,
-                    marginBottom: '0.8rem'
+                    marginBottom: '0.4rem'
                   }}>
                     축하합니다!
                   </h2>
                   <p style={{
-                    fontSize: '1.1rem',
-                    marginBottom: '1.5rem'
+                    fontSize: '1rem',
+                    marginBottom: '1rem'
                   }}>
                     세종대왕의 업적을 모두 알아보았어요!
                   </p>
@@ -3130,12 +3122,12 @@ function App() {
                       background: 'white',
                       color: '#4caf50',
                       border: 'none',
-                      padding: '0.9rem 1.8rem',
-                      borderRadius: '0.8rem',
+                      padding: '0.6rem 1.5rem',
+                      borderRadius: '0.6rem',
                       fontSize: '1rem',
                       fontWeight: 700,
                       cursor: 'pointer',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
                       transition: 'all 0.2s'
                     }}
                     onMouseEnter={(e) => {
@@ -3153,8 +3145,8 @@ function App() {
               {/* 푸터 */}
               <div style={{
                 textAlign: 'center',
-                padding: '2rem 0',
-                fontSize: '0.85rem',
+                padding: '1rem 0',
+                fontSize: '0.8rem',
                 color: '#999'
               }}>
                 © 2024 세종대왕 프로젝트. 학교에서 즐기는 한글 교육 프로그램
