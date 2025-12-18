@@ -17,6 +17,8 @@ import {
   saveTestPing,
   createChatSession,
   updateChatSession,
+  saveUserRole,
+  getUserRole,
 } from './firestore'
 import './App.css'
 
@@ -94,6 +96,7 @@ function App() {
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
   const [studentActivity, setStudentActivity] = useState<StudentActivity | null>(null)
   const [allStudents, setAllStudents] = useState<Student[]>([])
+  const [fetchingStudents, setFetchingStudents] = useState(false)
   const [currentChatSessionId, setCurrentChatSessionId] = useState<string | null>(null)
   const [selectedChatSession, setSelectedChatSession] = useState<ChatSession | null>(null)
   const [selectedLetterDetail, setSelectedLetterDetail] = useState<Letter | null>(null)
@@ -208,12 +211,31 @@ function App() {
     return () => clearInterval(interval)
   }, [])
 
-  // 학생 목록 불러오기
-  useEffect(() => {
-    getAllStudents().then(students => {
+  // 학생 목록 불러오기 함수
+  const fetchStudentList = async () => {
+    try {
+      setFetchingStudents(true)
+      const students = await getAllStudents()
+      console.log('Fetched students:', students)
       setAllStudents(students)
-    })
-  }, [])
+    } catch (e) {
+      console.error('Failed to fetch student list:', e)
+    } finally {
+      setFetchingStudents(false)
+    }
+  }
+
+  // 학생 목록 초기 불러오기
+  useEffect(() => {
+    fetchStudentList()
+    
+    // 이미 로그인된 상태라면 역할 확인
+    if (student && !userRole) {
+      getUserRole(student.uid).then(role => {
+        if (role) setUserRole(role)
+      })
+    }
+  }, [student])
 
   // Firebase 인증 상태 확인 및 학생 정보 로드
   useEffect(() => {
@@ -227,11 +249,20 @@ function App() {
         }
         setStudent(studentData)
         
+        // 사용자 역할(교사/학생) 불러오기
+        try {
+          const role = await getUserRole(user.uid)
+          if (role) {
+            setUserRole(role)
+          }
+        } catch (e) {
+          console.error('Failed to get user role:', e)
+        }
+        
         // 학생 목록에 추가/업데이트
         try {
           await saveStudent(studentData)
-          const students = await getAllStudents()
-          setAllStudents(students)
+          await fetchStudentList()
         } catch (e) {
           console.error('Failed to save/load students:', e)
         }
@@ -1397,9 +1428,14 @@ function App() {
     }
   }
 
-  const handleRoleSelect = (role: 'student' | 'teacher') => {
+  const handleRoleSelect = async (role: 'student' | 'teacher') => {
     if (student) {
-      setUserRole(role)
+      try {
+        setUserRole(role)
+        await saveUserRole(student.uid, role)
+      } catch (e) {
+        console.error('Failed to save user role:', e)
+      }
     }
   }
 
@@ -1562,19 +1598,52 @@ function App() {
               로그아웃
             </button>
           </div>
-          <div style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>학생 선택</div>
-          {allStudents.length === 0 && (
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            marginBottom: '0.5rem' 
+          }}>
+            <div style={{ fontSize: '1.1rem', fontWeight: 700 }}>학생 선택</div>
+            <button 
+              onClick={fetchStudentList}
+              disabled={fetchingStudents}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--traditional-blue)',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.3rem'
+              }}
+            >
+              {fetchingStudents ? '...' : '🔄 새로고침'}
+            </button>
+          </div>
+          {fetchingStudents && (
+            <div style={{ textAlign: 'center', padding: '1rem', color: '#666', fontSize: '0.9rem' }}>
+              목록을 불러오는 중...
+            </div>
+          )}
+          {!fetchingStudents && allStudents.length === 0 && (
             <div style={{ 
-              padding: '1rem', 
+              padding: '1.5rem 1rem', 
               background: '#fff9e6', 
               border: '1px solid var(--traditional-yellow)', 
-              borderRadius: '0.5rem',
+              borderRadius: '0.5rem', 
               marginBottom: '1rem',
               fontSize: '0.9rem',
               color: '#666',
               textAlign: 'center'
             }}>
-              등록된 학생이 없습니다.
+              <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>📢</div>
+              등록된 학생이 없습니다.<br/>
+              <span style={{ fontSize: '0.8rem', marginTop: '0.5rem', display: 'block', color: '#999' }}>
+                (학생들이 먼저 로그인을 해야 목록에 나타납니다.)
+              </span>
             </div>
           )}
           {allStudents.length > 0 && !selectedStudent && (
@@ -1591,32 +1660,47 @@ function App() {
               아래 목록에서 학생을 선택해주세요.
             </div>
           )}
-          <select
-            value={selectedStudent?.uid || ''}
-            onChange={(e) => {
-              const student = allStudents.find(s => s.uid === e.target.value)
-              if (student) {
-                handleSelectStudent(student)
-              }
-            }}
-            style={{
-              width: '100%',
-              padding: '0.8rem',
-              fontSize: '1rem',
-              border: '2px solid var(--border-color)',
-              borderRadius: '0.5rem',
-              background: 'white',
-              cursor: 'pointer',
-              marginBottom: '1rem'
-            }}
-          >
-            <option value="">-- 학생을 선택하세요 --</option>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {allStudents.map((s) => (
-              <option key={s.uid} value={s.uid}>
-                {s.name} ({s.email})
-              </option>
+              <button
+                key={s.uid}
+                onClick={() => handleSelectStudent(s)}
+                style={{
+                  padding: '1rem',
+                  background: selectedStudent?.uid === s.uid ? 'var(--traditional-blue)' : 'white',
+                  color: selectedStudent?.uid === s.uid ? 'white' : '#333',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '0.8rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.8rem',
+                  transition: 'all 0.2s',
+                  boxShadow: selectedStudent?.uid === s.uid ? '0 4px 12px rgba(40, 77, 117, 0.2)' : 'none'
+                }}
+              >
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: selectedStudent?.uid === s.uid ? 'rgba(255,255,255,0.2)' : '#f0f0f0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.8rem',
+                  fontWeight: 800,
+                  overflow: 'hidden'
+                }}>
+                  {s.photoURL ? <img src={s.photoURL} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (s.name?.[0] || '학')}
+                </div>
+                <div style={{ flex: 1, overflow: 'hidden' }}>
+                  <div style={{ fontWeight: 700, fontSize: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</div>
+                  <div style={{ fontSize: '0.75rem', opacity: 0.7, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.email}</div>
+                </div>
+              </button>
             ))}
-          </select>
+          </div>
         </div>
       <div className="chat-container">
           {selectedStudent ? (
