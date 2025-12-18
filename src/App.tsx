@@ -18,7 +18,6 @@ import {
   createChatSession,
   updateChatSession,
   saveUserRole,
-  getUserRole,
 } from './firestore'
 import './App.css'
 
