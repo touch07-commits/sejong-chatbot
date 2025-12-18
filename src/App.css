@@ -2955,6 +2955,10 @@ body {
   border-color: var(--traditional-yellow);
   background: linear-gradient(135deg, #FFF9E6 0%, #FFF4D6 100%);
   cursor: default;
+  min-height: auto;
+  padding: 1.5rem;
+  max-width: 300px;
+  margin: 0 auto;
 }
 
 .word-card-image {
@@ -3002,26 +3006,25 @@ body {
 }
 
 .word-sentence-container {
-  display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 3rem;
-  max-width: 1400px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1000px;
   margin: 0 auto;
   width: 100%;
   padding: 2rem;
-  align-items: start;
+  align-items: center;
 }
 
 .selected-word-display {
   text-align: center;
-  position: sticky;
-  top: 2rem;
+  width: 100%;
 }
 
 .selected-word-display h2 {
   color: var(--traditional-blue);
-  margin-bottom: 1.5rem;
-  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
 }
 
 .word-back-btn {
@@ -3044,13 +3047,14 @@ body {
 
 .sentence-form {
   background: linear-gradient(135deg, var(--hanji-base) 0%, #FFFEF8 100%);
-  padding: 3rem;
+  padding: 2.5rem;
   border-radius: 20px;
   border: 4px solid var(--traditional-blue);
   box-shadow:
     0 8px 20px rgba(0, 0, 0, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
   position: relative;
+  width: 100%;
 }
 
 .sentence-form::before {
@@ -3069,8 +3073,8 @@ body {
 
 .sentence-form h3 {
   color: var(--traditional-blue);
-  margin-bottom: 2rem;
-  font-size: 1.9rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.7rem;
   text-align: center;
   font-family: "Nanum Myeongjo", "Gungsuh", serif;
   font-weight: 800;
@@ -3079,15 +3083,16 @@ body {
 
 .sentence-input {
   width: 100%;
-  padding: 1.8rem;
-  font-size: 1.7rem;
+  padding: 1.5rem;
+  font-size: 1.6rem;
   border: 3px solid var(--traditional-green);
   border-radius: 12px;
   resize: vertical;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   font-family: "Nanum Gothic", "Gungsuh", sans-serif;
   box-sizing: border-box;
-  min-height: 180px;
+  min-height: 120px;
+  max-height: 150px;
   background: linear-gradient(to bottom, #FFFFFF 0%, #FFFEF8 100%);
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
   line-height: 1.8;
@@ -3158,6 +3163,8 @@ body {
   border: 3px solid var(--traditional-yellow);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   animation: fadeIn 0.5s ease;
+  width: 100%;
+  margin-top: 1rem;
 }
 
 @keyframes fadeIn {
@@ -3194,13 +3201,16 @@ body {
 }
 
 .feedback-content {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   line-height: 1.8;
   color: #333;
   margin-bottom: 1.5rem;
-  padding: 1rem;
+  padding: 1.2rem;
   background: white;
   border-radius: 10px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .feedback-close-btn {
