@@ -91,6 +91,7 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking')
   const [student, setStudent] = useState<Student | null>(null)
+  const [authLoading, setAuthLoading] = useState(true)
   const [loading, setLoading] = useState(false)
   const [userRole, setUserRole] = useState<UserRole>(null)
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
@@ -270,6 +271,7 @@ function App() {
         setStudent(null)
         setUserRole(null)
       }
+      setAuthLoading(false)
     })
     
     return () => unsubscribe()
@@ -1503,15 +1505,91 @@ function App() {
     }
   }
 
-  // 역할 선택 화면
-  if (student && !userRole) {
-  return (
-    <div className="app-root" style={{
-      backgroundImage: 'url(/firstpage.png)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
-    }}>
+  // 1. 초기 로딩 중
+  if (authLoading) {
+    return (
+      <div className="app-root" style={{
+        backgroundImage: 'url(/firstpage.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.9)',
+          padding: '2rem',
+          borderRadius: '1rem',
+          fontSize: '1.5rem',
+          fontWeight: 700,
+          color: 'var(--traditional-blue)'
+        }}>
+          불러오는 중...
+        </div>
+      </div>
+    )
+  }
+
+  // 2. 로그인이 안 된 경우 - 로그인 화면 표시
+  if (!student) {
+    return (
+      <div className="app-root" style={{
+        backgroundImage: 'url(/firstpage.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}>
+        <div style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 1000,
+          background: 'rgba(255, 255, 255, 0.95)',
+          padding: '3rem',
+          borderRadius: '0.8rem',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          textAlign: 'center',
+          minWidth: '400px'
+        }}>
+          <h1 style={{ marginBottom: '1rem', fontSize: '2rem', color: 'var(--traditional-blue)' }}>한국 전통 문화 체험</h1>
+          <p style={{ marginBottom: '2rem', fontSize: '1.2rem', color: '#666' }}>Sejong Culture Experience</p>
+          <button
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            style={{
+              padding: '1rem 2rem',
+              background: '#4285F4',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontSize: '1.2rem',
+              fontWeight: 700,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.6 : 1
+            }}
+          >
+            {loading ? '로그인 중...' : 'Google 로그인'}
+          </button>
+          {error && (
+            <div style={{ marginTop: '1rem', color: 'var(--traditional-red)', fontSize: '0.9rem' }}>
+              {error}
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // 3. 로그인은 됐는데 역할이 없는 경우 - 역할 선택 화면
+  if (!userRole) {
+    return (
+      <div className="app-root" style={{
+        backgroundImage: 'url(/firstpage.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}>
         <div style={{
           position: 'fixed',
           top: '50%',
@@ -1563,8 +1641,8 @@ function App() {
     )
   }
 
-  // 교사 화면
-  if (student && userRole === 'teacher') {
+  // 4. 교사인 경우 - 교사 화면
+  if (userRole === 'teacher') {
     return (
       <div className="app-root">
         <div className="sidebar-menu">
@@ -2397,57 +2475,6 @@ function App() {
     )
   }
 
-  // 학생 화면
-  if (!student) {
-    return (
-      <div className="app-root" style={{
-        backgroundImage: 'url(/firstpage.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}>
-        <div style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 1000,
-          background: 'rgba(255, 255, 255, 0.95)',
-          padding: '3rem',
-          borderRadius: '0.8rem',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-          textAlign: 'center',
-          minWidth: '400px'
-        }}>
-          <h1 style={{ marginBottom: '1rem', fontSize: '2rem', color: 'var(--traditional-blue)' }}>한국 전통 문화 체험</h1>
-          <p style={{ marginBottom: '2rem', fontSize: '1.2rem', color: '#666' }}>Sejong Culture Experience</p>
-          <button
-            onClick={handleGoogleLogin}
-            disabled={loading}
-            style={{
-              padding: '1rem 2rem',
-              background: '#4285F4',
-              color: 'white',
-              border: 'none',
-              borderRadius: '0.5rem',
-              fontSize: '1.2rem',
-              fontWeight: 700,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.6 : 1
-            }}
-          >
-            {loading ? '로그인 중...' : 'Google 로그인'}
-          </button>
-          {error && (
-            <div style={{ marginTop: '1rem', color: 'var(--traditional-red)', fontSize: '0.9rem' }}>
-              {error}
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="app-root">
       <div className="sidebar-menu">
@@ -2535,34 +2562,32 @@ function App() {
             타자연습
           </button>
         </div>
-        {userRole !== 'teacher' && (
-          <button 
-            onClick={() => handleRoleSelect('teacher')}
-            style={{
-              width: '100%',
-              padding: '0.8rem',
-              marginBottom: '0.5rem',
-              background: 'var(--traditional-blue)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '0.5rem',
-              fontSize: '1rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.9'
-              e.currentTarget.style.transform = 'scale(1.02)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '1'
-              e.currentTarget.style.transform = 'scale(1)'
-            }}
-          >
-            👨‍🏫 교사 화면
-          </button>
-        )}
+        <button 
+          onClick={() => handleRoleSelect('teacher')}
+          style={{
+            width: '100%',
+            padding: '0.8rem',
+            marginBottom: '0.5rem',
+            background: 'var(--traditional-blue)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '0.5rem',
+            fontSize: '1rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = '0.9'
+            e.currentTarget.style.transform = 'scale(1.02)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = '1'
+            e.currentTarget.style.transform = 'scale(1)'
+          }}
+        >
+          👨‍🏫 교사 화면
+        </button>
         {student && (
           <button
             onClick={async () => {
