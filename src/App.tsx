@@ -9,6 +9,7 @@ import {
   getLetters,
   getChatSessions,
   getLearnResults,
+  saveLearnResult,
   saveTypingResult,
   getTypingResults,
   saveDecoratedLetter,
@@ -117,6 +118,7 @@ function App() {
   const [_isDragging, _setIsDragging] = useState(false)
   const [_showSuccessMessage, _setShowSuccessMessage] = useState(false)
   const [_successMessage, _setSuccessMessage] = useState('')
+  const [learnSaved, setLearnSaved] = useState(false)
   
   // 글자꾸미기 관련
   const [decoratedLetters, setDecoratedLetters] = useState<{ id: string; letter: string; dataUrl: string; createdAt: string }[]>([])
@@ -1182,6 +1184,7 @@ function App() {
       setAllLearnItems(items)
       setCurrentPage(0)
       setDroppedItems({})
+      setLearnSaved(false)
     }
   }, [mode])
 
@@ -1207,6 +1210,28 @@ function App() {
       setShuffledDragItems(shuffled)
     }
   }, [mode, allLearnItems, currentPage])
+
+  useEffect(() => {
+    if (mode === 'learn' && allLearnItems.length > 0 && !learnSaved && student) {
+      const isComplete = allLearnItems.every(item => 
+        _droppedItems[item.id]?.name && _droppedItems[item.id]?.description
+      )
+      
+      if (isComplete) {
+        const result: LearnResult = {
+          id: Date.now().toString(),
+          completedAt: new Date().toISOString(),
+          items: allLearnItems.map(item => item.name)
+        }
+        
+        saveLearnResult(student.uid, result).then(() => {
+          setLearnSaved(true)
+        }).catch(e => {
+          console.error('Failed to save learn result:', e)
+        })
+      }
+    }
+  }, [mode, allLearnItems, _droppedItems, learnSaved, student])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -3117,6 +3142,7 @@ function App() {
                   <button
                     onClick={() => {
                       setDroppedItems({})
+                      setLearnSaved(false)
                     }}
                     style={{
                       background: 'white',
