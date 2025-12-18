@@ -1211,10 +1211,15 @@ function App() {
     }
   }, [mode, allLearnItems, currentPage])
 
+  // 학습 결과 저장 로직 (이름/설명 매칭이 모두 완료되었을 때)
   useEffect(() => {
-    if (mode === 'learn' && allLearnItems.length > 0 && !learnSaved && student) {
+    // 학생이고, 학습 모드이며, 아직 저장되지 않았을 때
+    if (mode === 'learn' && allLearnItems.length > 0 && !learnSaved && student && userRole !== 'teacher') {
+      // 모든 항목이 이름과 설명이 모두 채워졌는지 확인
       const isComplete = allLearnItems.every(item => 
-        _droppedItems[item.id]?.name && _droppedItems[item.id]?.description
+        _droppedItems[item.id] && 
+        _droppedItems[item.id].name && 
+        _droppedItems[item.id].description
       )
       
       if (isComplete) {
@@ -1225,13 +1230,17 @@ function App() {
         }
         
         saveLearnResult(student.uid, result).then(() => {
-          setLearnSaved(true)
+          setLearnSaved(true);
+          // 저장 후 목록 갱신을 위해 학습 결과를 다시 불러오도록 트리거할 수 있음
+          getLearnResults(student.uid).then(results => {
+            setLearnResults(results);
+          });
         }).catch(e => {
-          console.error('Failed to save learn result:', e)
+          console.error('Failed to save learn result:', e);
         })
       }
     }
-  }, [mode, allLearnItems, _droppedItems, learnSaved, student])
+  }, [mode, allLearnItems, _droppedItems, learnSaved, student, userRole])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -1803,19 +1812,52 @@ function App() {
                 )}
               </div>
               
-              <div style={{ marginBottom: '2rem' }}>
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--traditional-yellow)' }}>학습 결과 ({studentActivity?.learnResults.length || 0}개)</h3>
+              <div style={{ marginBottom: '2.5rem' }}>
+                <h3 style={{ 
+                  fontSize: '1.6rem', 
+                  marginBottom: '1.2rem', 
+                  color: 'var(--traditional-yellow)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.6rem',
+                  fontWeight: 800
+                }}>
+                  <span style={{ fontSize: '1.8rem' }}>🎯</span> 학습 결과 ({studentActivity?.learnResults.length || 0}개)
+                </h3>
                 {studentActivity?.learnResults.length ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {studentActivity.learnResults.map((result) => (
-                      <div key={result.id} style={{ padding: '1.5rem', background: 'white', border: '2px solid var(--border-color)', borderRadius: '0.8rem' }}>
-                        <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.5rem' }}>
-                          {new Date(result.completedAt).toLocaleString('ko-KR')}
+                    {[...studentActivity.learnResults]
+                      .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
+                      .map((result) => (
+                      <div key={result.id} style={{ 
+                        padding: '1.5rem', 
+                        background: 'white', 
+                        border: '1px solid #e0e0e0', 
+                        borderRadius: '1.2rem',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                      }}>
+                        <div style={{ 
+                          display: 'flex', 
+                          justifyContent: 'space-between', 
+                          alignItems: 'center',
+                          marginBottom: '1rem'
+                        }}>
+                          <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1a1a1a' }}>세종대왕의 업적 학습 완료</div>
+                          <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                            {new Date(result.completedAt).toLocaleString('ko-KR')}
+                          </div>
                         </div>
-                        <div style={{ fontWeight: 700, marginBottom: '0.5rem' }}>학습한 항목:</div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
                           {result.items.map((item, idx) => (
-                            <span key={idx} style={{ padding: '0.3rem 0.8rem', background: 'var(--traditional-yellow)', borderRadius: '0.3rem', fontSize: '0.9rem' }}>
+                            <span key={idx} style={{ 
+                              padding: '0.5rem 1rem', 
+                              background: '#fff9e6', 
+                              color: '#d4a017',
+                              border: '1px solid #ffeeba',
+                              borderRadius: '2rem', 
+                              fontSize: '0.95rem',
+                              fontWeight: 700
+                            }}>
                               {item}
                             </span>
                           ))}
@@ -1824,48 +1866,125 @@ function App() {
                     ))}
                   </div>
                 ) : (
-                  <div style={{ color: '#666', fontStyle: 'italic' }}>아직 학습 결과가 없습니다.</div>
+                  <div style={{ 
+                    padding: '3rem', 
+                    textAlign: 'center', 
+                    background: '#f8f9fa', 
+                    borderRadius: '1.2rem',
+                    color: '#999',
+                    border: '1px dashed #ddd'
+                  }}>
+                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🎯</div>
+                    <p>아직 학습 결과가 없습니다.</p>
+                  </div>
                 )}
               </div>
               
-              <div style={{ marginBottom: '2rem' }}>
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--traditional-red)' }}>타자 연습 결과 ({studentActivity?.typingResults.length || 0}개)</h3>
+              <div style={{ marginBottom: '2.5rem' }}>
+                <h3 style={{ 
+                  fontSize: '1.6rem', 
+                  marginBottom: '1.2rem', 
+                  color: 'var(--traditional-red)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.6rem',
+                  fontWeight: 800
+                }}>
+                  <span style={{ fontSize: '1.8rem' }}>⌨️</span> 타자 연습 결과 ({studentActivity?.typingResults.length || 0}개)
+                </h3>
                 {studentActivity?.typingResults.length ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {studentActivity.typingResults.map((result) => (
-                      <div key={result.id} style={{ padding: '1.5rem', background: 'white', border: '2px solid var(--border-color)', borderRadius: '0.8rem' }}>
-                        <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.5rem' }}>
-                          {new Date(result.date).toLocaleString('ko-KR')}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                    {[...studentActivity.typingResults]
+                      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                      .map((result) => (
+                      <div key={result.id} style={{ 
+                        padding: '1.8rem', 
+                        background: 'white', 
+                        border: '1px solid #e0e0e0', 
+                        borderRadius: '1.2rem',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                        position: 'relative',
+                        overflow: 'hidden'
+                      }}>
+                        {/* 상단 띠 장식 */}
+                        <div style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          height: '4px',
+                          background: 'var(--traditional-red)',
+                          opacity: 0.8
+                        }}></div>
+
+                        <div style={{ 
+                          display: 'flex', 
+                          justifyContent: 'space-between', 
+                          alignItems: 'center',
+                          marginBottom: '1.5rem',
+                          borderBottom: '1px solid #f0f0f0',
+                          paddingBottom: '0.8rem'
+                        }}>
+                          <div style={{ fontSize: '1.1rem', color: '#1a1a1a', fontWeight: 700 }}>
+                            {new Date(result.date).toLocaleString('ko-KR', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </div>
+                          <div style={{ 
+                            background: '#f8f9fa',
+                            padding: '0.4rem 1rem',
+                            borderRadius: '2rem',
+                            fontSize: '0.9rem',
+                            fontWeight: 700,
+                            color: '#444',
+                            border: '1px solid #eee'
+                          }}>
+                            {result.mode === 'classic' ? '🔤 클래식' : result.mode === 'falling' ? '☁️ 떨어지는 글자' : '🏹 활 쏘기'}
+                          </div>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem', marginTop: '1rem' }}>
-                          <div>
-                            <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.3rem' }}>점수</div>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--traditional-blue)' }}>{result.score}</div>
+
+                        <div style={{ 
+                          display: 'grid', 
+                          gridTemplateColumns: 'repeat(4, 1fr)', 
+                          gap: '1rem',
+                          textAlign: 'center'
+                        }}>
+                          <div style={{ background: '#f0f4ff', padding: '1rem', borderRadius: '1rem' }}>
+                            <div style={{ fontSize: '0.9rem', color: '#5c6bc0', marginBottom: '0.4rem', fontWeight: 600 }}>점수</div>
+                            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#283593' }}>{result.score}</div>
                           </div>
-                          <div>
-                            <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.3rem' }}>정답</div>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--traditional-green)' }}>{result.correct}</div>
+                          <div style={{ background: '#e8f5e9', padding: '1rem', borderRadius: '1rem' }}>
+                            <div style={{ fontSize: '0.9rem', color: '#43a047', marginBottom: '0.4rem', fontWeight: 600 }}>정답</div>
+                            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1b5e20' }}>{result.correct}</div>
                           </div>
-                          <div>
-                            <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.3rem' }}>오답</div>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--traditional-red)' }}>{result.wrong}</div>
+                          <div style={{ background: '#fff1f1', padding: '1rem', borderRadius: '1rem' }}>
+                            <div style={{ fontSize: '0.9rem', color: '#e53935', marginBottom: '0.4rem', fontWeight: 600 }}>오답</div>
+                            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#b71c1c' }}>{result.wrong}</div>
                           </div>
-                          <div>
-                            <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.3rem' }}>레벨</div>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--traditional-yellow)' }}>{result.level}</div>
-                          </div>
-                          <div>
-                            <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.3rem' }}>모드</div>
-                            <div style={{ fontSize: '1.2rem', fontWeight: 700 }}>
-                              {result.mode === 'classic' ? '클래식' : result.mode === 'falling' ? '떨어지는 글자' : '활 쏘기'}
-                            </div>
+                          <div style={{ background: '#fff9e6', padding: '1rem', borderRadius: '1rem' }}>
+                            <div style={{ fontSize: '0.9rem', color: '#f57f17', marginBottom: '0.4rem', fontWeight: 600 }}>레벨</div>
+                            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#e65100' }}>{result.level}</div>
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div style={{ color: '#666', fontStyle: 'italic' }}>아직 타자 연습 결과가 없습니다.</div>
+                  <div style={{ 
+                    padding: '3rem', 
+                    textAlign: 'center', 
+                    background: '#f8f9fa', 
+                    borderRadius: '1.2rem',
+                    color: '#999',
+                    border: '1px dashed #ddd'
+                  }}>
+                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>⌨️</div>
+                    <p>아직 타자 연습 결과가 없습니다.</p>
+                  </div>
                 )}
               </div>
             </div>
