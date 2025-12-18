@@ -162,6 +162,7 @@ function App() {
   const typingIntervalRef = useRef<number | null>(null)
   const typingInputRef = useRef<HTMLInputElement | null>(null)
   const typingCompositionRef = useRef(false) // 한글 입력 중인지 확인
+  const chatScrollRef = useRef<HTMLDivElement | null>(null)
   
   // 떨어지는 글자 게임 관련
   const [fallingLetters, setFallingLetters] = useState<Array<{id: string, letter: string, x: number, y: number, speed: number}>>([])
@@ -304,6 +305,13 @@ function App() {
       clearTimeout(timeout)
     }
   }, [])
+
+  // 채팅 메시지 추가 시 자동 스크롤
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight
+    }
+  }, [messages, submitting])
 
   // 대화하기 모드 진입 시 초기 인삿말 추가
   useEffect(() => {
@@ -2744,14 +2752,18 @@ function App() {
             </div>
 
             {/* 메시지 영역 */}
-            <div style={{
-              flex: 1,
-              overflowY: 'auto',
-              padding: '1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1.5rem'
-            }}>
+            <div 
+              ref={chatScrollRef}
+              style={{
+                flex: 1,
+                overflowY: 'auto',
+                padding: '1.5rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.5rem',
+                scrollBehavior: 'smooth'
+              }}
+            >
               {messages.length === 0 ? (
                 <div style={{
                   textAlign: 'center',
