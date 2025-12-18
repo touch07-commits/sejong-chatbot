@@ -240,7 +240,16 @@ function App() {
 
   // Firebase 인증 상태 확인 및 학생 정보 로드
   useEffect(() => {
+    // 5초 후에도 응답이 없으면 강제로 로딩 해제 (네트워크 오류나 도메인 미등록 대비)
+    const timeout = setTimeout(() => {
+      if (authLoading) {
+        setAuthLoading(false)
+        console.warn('Auth state check timed out. Showing login screen.')
+      }
+    }, 5000)
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      clearTimeout(timeout)
       if (user) {
         const studentData: Student = {
           uid: user.uid,
@@ -274,7 +283,10 @@ function App() {
       setAuthLoading(false)
     })
     
-    return () => unsubscribe()
+    return () => {
+      unsubscribe()
+      clearTimeout(timeout)
+    }
   }, [])
 
   // 대화하기 모드 진입 시 초기 인삿말 추가
