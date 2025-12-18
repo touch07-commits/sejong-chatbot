@@ -2245,25 +2245,18 @@ function App() {
         </div>
         <div className="mode-selector">
           <button
+            className={`mode-button ${mode === 'book' ? 'active' : ''}`}
+            onClick={() => handleModeChange('book')}
+          >
+            <span style={{ fontSize: '1.3rem', marginRight: '0.5rem' }}>📖</span>
+            그림책 읽기
+          </button>
+          <button
             className={`mode-button ${mode === 'chat' ? 'active' : ''}`}
             onClick={() => handleModeChange('chat')}
           >
             <span style={{ fontSize: '1.3rem', marginRight: '0.5rem' }}>💬</span>
             이야기해요
-          </button>
-          <button
-            className={`mode-button ${mode === 'letter' ? 'active' : ''}`}
-            onClick={() => handleModeChange('letter')}
-          >
-            <span style={{ fontSize: '1.3rem', marginRight: '0.5rem' }}>✉️</span>
-            편지쓰기
-          </button>
-          <button
-            className={`mode-button ${mode === 'inbox' ? 'active' : ''}`}
-            onClick={() => handleModeChange('inbox')}
-          >
-            <span style={{ fontSize: '1.3rem', marginRight: '0.5rem' }}>📮</span>
-            편지함
           </button>
           <button
             className={`mode-button ${mode === 'learn' ? 'active' : ''}`}
@@ -2280,25 +2273,32 @@ function App() {
             한글 꾸미기
           </button>
           <button
-            className={`mode-button ${mode === 'typing' ? 'active' : ''}`}
-            onClick={() => handleModeChange('typing')}
-          >
-            <span style={{ fontSize: '1.3rem', marginRight: '0.5rem' }}>⌨️</span>
-            타자연습
-          </button>
-          <button
-            className={`mode-button ${mode === 'book' ? 'active' : ''}`}
-            onClick={() => handleModeChange('book')}
-          >
-            <span style={{ fontSize: '1.3rem', marginRight: '0.5rem' }}>📖</span>
-            그림책 읽기
-          </button>
-          <button
             className={`mode-button ${mode === 'word' ? 'active' : ''}`}
             onClick={() => handleModeChange('word')}
           >
             <span style={{ fontSize: '1.3rem', marginRight: '0.5rem' }}>🔍</span>
             한글을 찾아서
+          </button>
+          <button
+            className={`mode-button ${mode === 'letter' ? 'active' : ''}`}
+            onClick={() => handleModeChange('letter')}
+          >
+            <span style={{ fontSize: '1.3rem', marginRight: '0.5rem' }}>✉️</span>
+            편지쓰기
+          </button>
+          <button
+            className={`mode-button ${mode === 'inbox' ? 'active' : ''}`}
+            onClick={() => handleModeChange('inbox')}
+          >
+            <span style={{ fontSize: '1.3rem', marginRight: '0.5rem' }}>📮</span>
+            편지함
+          </button>
+          <button
+            className={`mode-button ${mode === 'typing' ? 'active' : ''}`}
+            onClick={() => handleModeChange('typing')}
+          >
+            <span style={{ fontSize: '1.3rem', marginRight: '0.5rem' }}>⌨️</span>
+            타자연습
           </button>
         </div>
         {userRole !== 'teacher' && (
