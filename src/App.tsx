@@ -1175,14 +1175,9 @@ function App() {
   useEffect(() => {
     if (mode === 'learn') {
       const items: LearnItem[] = [
-        { id: '1', icon: '👑', name: '세종대왕', description: '조선 제4대 임금' },
-        { id: '2', icon: '📜', name: '훈민정음', description: '한글 창제' },
-        { id: '3', icon: '🔬', name: '과학', description: '천문학과 측우기 발명' },
-        { id: '4', icon: '📚', name: '인쇄술', description: '금속활자 개량' },
-        { id: '5', icon: '🌍', name: '지리', description: '지도 제작' },
-        { id: '6', icon: '⚖️', name: '법률', description: '경제와 법률 정비' },
-        { id: '7', icon: '🎭', name: '문화', description: '예술과 음악 발전' },
-        { id: '8', icon: '🏛️', name: '정치', description: '집현전 설립' }
+        { id: '1', icon: '/hunmin.png', name: '훈민정음', description: '우리말을 쓸 수 있도록 한글을 만들어냈어요.' },
+        { id: '2', icon: '/chkugi.png', name: '측우기', description: '비의 양을 재는 측우기를 만들어 농사에 도움을 줬어요.' },
+        { id: '3', icon: '/haesigye.png', name: '앙부일구', description: '시간을 정확히 알 수 있는 해시계를 만들었어요.' }
       ]
       setAllLearnItems(items)
       setCurrentPage(0)
@@ -2234,7 +2229,7 @@ function App() {
             />
           </div>
           <div className="user-details">
-            <span>세종대왕</span>
+            <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>세종대왕</span>
           </div>
         </div>
         <div style={{ height: '8px', display: 'flex', width: '100%', margin: '0 0 1.5rem 0' }}>
@@ -2861,481 +2856,285 @@ function App() {
             padding: '2rem'
           }}>
             <div style={{
-              maxWidth: '800px',
+              maxWidth: '900px',
               margin: '0 auto'
             }}>
               {/* 헤더 섹션 */}
               <div style={{
                 background: 'white',
                 borderRadius: '1.5rem',
-                padding: '3rem',
+                padding: '2.5rem',
                 marginBottom: '2rem',
                 boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '2rem'
+                textAlign: 'center'
               }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{
-                    display: 'inline-block',
-                    background: '#e3f2fd',
-                    color: '#1976d2',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.9rem',
+                <h1 style={{
+                  fontSize: '2rem',
+                  fontWeight: 800,
+                  marginBottom: '0.8rem',
+                  color: '#1976d2'
+                }}>
+                  🎯 세종대왕의 하신 일 알아보기
+                </h1>
+                <p style={{
+                  fontSize: '1.1rem',
+                  color: '#666',
+                  lineHeight: 1.6
+                }}>
+                  각 이미지에 맞는 이름과 설명을 드래그하여 연결해보세요!
+                </p>
+              </div>
+
+              {/* 드래그&드롭 게임 섹션 */}
+              <div style={{
+                background: 'white',
+                borderRadius: '1.5rem',
+                padding: '3rem',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                marginBottom: '2rem'
+              }}>
+                {/* 이미지 카드들 (드롭 존) */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '2rem',
+                  marginBottom: '3rem'
+                }}>
+                  {allLearnItems.map((item) => {
+                    const bgColors: Record<string, string> = {
+                      '1': '#fff9e6',
+                      '2': '#e3f2fd',
+                      '3': '#f3e5f5'
+                    }
+                    return (
+                      <div
+                        key={item.id}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault()
+                          const data = e.dataTransfer.getData('text/plain')
+                          const draggedData = JSON.parse(data)
+                          if (draggedData.id === item.id) {
+                            setDroppedItems(prev => ({
+                              ...prev,
+                              [item.id]: { name: item.name, description: item.description }
+                            }))
+                          }
+                        }}
+                        style={{
+                          background: 'white',
+                          border: _droppedItems[item.id] ? '3px solid #4caf50' : '3px dashed #ddd',
+                          borderRadius: '1.2rem',
+                          padding: '1.5rem',
+                          textAlign: 'center',
+                          transition: 'all 0.3s',
+                          minHeight: '320px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'space-between'
+                        }}
+                      >
+                        {/* 이미지 */}
+                        <div style={{
+                          width: '140px',
+                          height: '140px',
+                          background: bgColors[item.id] || '#f5f5f5',
+                          borderRadius: '1rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          overflow: 'hidden',
+                          marginBottom: '1rem'
+                        }}>
+                          <img
+                            src={item.icon}
+                            alt="업적"
+                            style={{
+                              maxWidth: '100%',
+                              maxHeight: '100%',
+                              objectFit: 'contain'
+                            }}
+                          />
+                        </div>
+
+                        {/* 드롭된 내용 표시 */}
+                        {_droppedItems[item.id] ? (
+                          <div style={{
+                            background: '#e8f5e9',
+                            borderRadius: '0.8rem',
+                            padding: '1rem',
+                            width: '100%'
+                          }}>
+                            <div style={{
+                              fontSize: '1.1rem',
+                              fontWeight: 700,
+                              color: '#2e7d32',
+                              marginBottom: '0.5rem'
+                            }}>
+                              ✓ {_droppedItems[item.id]?.name}
+                            </div>
+                            <div style={{
+                              fontSize: '0.85rem',
+                              color: '#555',
+                              lineHeight: 1.4
+                            }}>
+                              {_droppedItems[item.id]?.description}
+                            </div>
+                          </div>
+                        ) : (
+                          <div style={{
+                            color: '#999',
+                            fontSize: '0.9rem',
+                            padding: '1rem',
+                            border: '2px dashed #e0e0e0',
+                            borderRadius: '0.8rem',
+                            width: '100%'
+                          }}>
+                            여기에 드래그하세요
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+
+                {/* 구분선 */}
+                <div style={{
+                  height: '2px',
+                  background: 'linear-gradient(to right, transparent, #ddd, transparent)',
+                  margin: '2rem 0'
+                }}></div>
+
+                {/* 드래그 가능한 항목들 */}
+                <div style={{
+                  textAlign: 'center',
+                  marginBottom: '1.5rem'
+                }}>
+                  <h3 style={{
+                    fontSize: '1.2rem',
                     fontWeight: 700,
-                    marginBottom: '1rem'
+                    color: '#333',
+                    marginBottom: '0.5rem'
                   }}>
-                    📚 세종대왕의 업적
-                  </div>
-                  <h1 style={{
-                    fontSize: '2.5rem',
+                    아래 카드를 드래그하여 위 이미지와 맞춰보세요
+                  </h3>
+                  <p style={{
+                    fontSize: '0.9rem',
+                    color: '#666'
+                  }}>
+                    이름과 설명이 함께 있는 카드를 드래그해서 올바른 이미지에 놓아보세요!
+                  </p>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  gap: '1.5rem',
+                  justifyContent: 'center',
+                  flexWrap: 'wrap'
+                }}>
+                  {(_shuffledDragItems.length > 0 ? _shuffledDragItems : allLearnItems)
+                    .filter(item => !_droppedItems[item.id])
+                    .map((item) => (
+                      <div
+                        key={item.id}
+                        draggable
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData('text/plain', JSON.stringify({ id: item.id, name: item.name, description: item.description }))
+                        }}
+                        style={{
+                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                          color: 'white',
+                          padding: '1.2rem 1.5rem',
+                          borderRadius: '1rem',
+                          cursor: 'grab',
+                          boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)',
+                          transition: 'all 0.2s',
+                          minWidth: '200px',
+                          maxWidth: '250px'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-4px)'
+                          e.currentTarget.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.5)'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0)'
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)'
+                        }}
+                      >
+                        <div style={{
+                          fontSize: '1.1rem',
+                          fontWeight: 700,
+                          marginBottom: '0.5rem',
+                          textAlign: 'center'
+                        }}>
+                          {item.name}
+                        </div>
+                        <div style={{
+                          fontSize: '0.85rem',
+                          opacity: 0.95,
+                          lineHeight: 1.4,
+                          textAlign: 'center'
+                        }}>
+                          {item.description}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              {/* 완료 메시지 */}
+              {Object.keys(_droppedItems).length === allLearnItems.length && allLearnItems.length > 0 && (
+                <div style={{
+                  background: 'linear-gradient(135deg, #4caf50 0%, #45a049 100%)',
+                  borderRadius: '1.5rem',
+                  padding: '2rem',
+                  textAlign: 'center',
+                  color: 'white',
+                  marginBottom: '2rem',
+                  boxShadow: '0 8px 24px rgba(76, 175, 80, 0.3)'
+                }}>
+                  <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎉</div>
+                  <h2 style={{
+                    fontSize: '1.8rem',
                     fontWeight: 800,
-                    marginBottom: '1rem',
-                    lineHeight: 1.3
+                    marginBottom: '0.8rem'
                   }}>
-                    안녕?<br/>나는 <span style={{ color: 'var(--traditional-blue)' }}>세종대왕</span>이야!
-                  </h1>
+                    축하합니다!
+                  </h2>
                   <p style={{
                     fontSize: '1.1rem',
-                    color: '#666',
-                    lineHeight: 1.7,
                     marginBottom: '1.5rem'
                   }}>
-                    내가 만든 한글, 조선 왕조의 중 세종대왕으로 백성들을 위해 많은 과학기술을 만들어 내었지!
+                    세종대왕의 업적을 모두 알아보았어요!
                   </p>
-                  <div style={{ display: 'flex', gap: '1rem' }}>
-                    <button style={{
-                      background: '#1976d2',
-                      color: 'white',
+                  <button
+                    onClick={() => {
+                      setDroppedItems({})
+                    }}
+                    style={{
+                      background: 'white',
+                      color: '#4caf50',
                       border: 'none',
                       padding: '0.9rem 1.8rem',
                       borderRadius: '0.8rem',
                       fontSize: '1rem',
                       fontWeight: 700,
                       cursor: 'pointer',
-                      boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                       transition: 'all 0.2s'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)'
-                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(25, 118, 210, 0.4)'
+                      e.currentTarget.style.transform = 'scale(1.05)'
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)'
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(25, 118, 210, 0.3)'
-                    }}>
-                      ✨ 더 자세히보기
-                    </button>
-                    <button style={{
-                      background: 'white',
-                      color: '#666',
-                      border: '2px solid var(--border-color)',
-                      padding: '0.9rem 1.8rem',
-                      borderRadius: '0.8rem',
-                      fontSize: '1rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
+                      e.currentTarget.style.transform = 'scale(1)'
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--traditional-blue)'
-                      e.currentTarget.style.color = 'var(--traditional-blue)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--border-color)'
-                      e.currentTarget.style.color = '#666'
-                    }}>
-                      🏛️ 독과정 통기
-                    </button>
-                  </div>
-                </div>
-                <div style={{
-                  width: '220px',
-                  height: '220px',
-                  background: 'linear-gradient(135deg, #fff9e6 0%, #ffe8d4 100%)',
-                  borderRadius: '1.5rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-                  overflow: 'hidden'
-                }}>
-                  <img
-                    src="/sejong-avata.png"
-                    alt="세종대왕"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'contain'
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* 업적 카드 섹션 */}
-              <div style={{
-                textAlign: 'center',
-                marginBottom: '2rem'
-              }}>
-                <h2 style={{
-                  fontSize: '1.8rem',
-                  fontWeight: 800,
-                  marginBottom: '0.5rem'
-                }}>
-                  내가 한 일들을 소개할게요
-                </h2>
-                <p style={{
-                  fontSize: '1rem',
-                  color: '#666'
-                }}>
-                  나는 한글을 만들고 과학 기술도 많이 발전시켜서 백성들이 더 행복하게 살 수 있게 했어요!
-                </p>
-              </div>
-
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '1.5rem',
-                marginBottom: '2rem'
-              }}>
-                {/* 훈민정음 카드 */}
-                <div style={{
-                  background: 'white',
-                  borderRadius: '1.5rem',
-                  padding: '2rem',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-                  textAlign: 'center',
-                  transition: 'all 0.3s',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-8px)'
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.08)'
-                }}>
-                  <div style={{
-                    width: '120px',
-                    height: '120px',
-                    background: '#fff9e6',
-                    borderRadius: '1rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 1.5rem',
-                    overflow: 'hidden'
-                  }}>
-                    <img
-                      src="/hunmin.png"
-                      alt="훈민정음"
-                      style={{
-                        maxWidth: '100%',
-                        maxHeight: '100%',
-                        objectFit: 'contain'
-                      }}
-                    />
-                  </div>
-                  <h3 style={{
-                    fontSize: '1.3rem',
-                    fontWeight: 800,
-                    marginBottom: '0.5rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem'
-                  }}>
-                    <span style={{ color: '#4caf50' }}>★</span>
-                    훈민정음 (한글)
-                  </h3>
-                  <p style={{
-                    fontSize: '0.95rem',
-                    color: '#666',
-                    lineHeight: 1.6
-                  }}>
-                    우리말을 쓸 수 있도록 한글을 만들어냈어요.
-                  </p>
-                </div>
-
-                {/* 측우기 카드 */}
-                <div style={{
-                  background: 'white',
-                  borderRadius: '1.5rem',
-                  padding: '2rem',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-                  textAlign: 'center',
-                  transition: 'all 0.3s',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-8px)'
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.08)'
-                }}>
-                  <div style={{
-                    width: '120px',
-                    height: '120px',
-                    background: '#e3f2fd',
-                    borderRadius: '1rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 1.5rem',
-                    overflow: 'hidden'
-                  }}>
-                    <img
-                      src="/chkugi.png"
-                      alt="측우기"
-                      style={{
-                        maxWidth: '100%',
-                        maxHeight: '100%',
-                        objectFit: 'contain'
-                      }}
-                    />
-                  </div>
-                  <h3 style={{
-                    fontSize: '1.3rem',
-                    fontWeight: 800,
-                    marginBottom: '0.5rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem'
-                  }}>
-                    <span style={{ color: '#4caf50' }}>★</span>
-                    측우기
-                  </h3>
-                  <p style={{
-                    fontSize: '0.95rem',
-                    color: '#666',
-                    lineHeight: 1.6
-                  }}>
-                    비의 양을 재는 측우기를 만들어 농사에 도움을 줬어요.
-                  </p>
-                </div>
-
-                {/* 해시계 카드 */}
-                <div style={{
-                  background: 'white',
-                  borderRadius: '1.5rem',
-                  padding: '2rem',
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-                  textAlign: 'center',
-                  transition: 'all 0.3s',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-8px)'
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.08)'
-                }}>
-                  <div style={{
-                    width: '120px',
-                    height: '120px',
-                    background: '#f3e5f5',
-                    borderRadius: '1rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 1.5rem',
-                    overflow: 'hidden'
-                  }}>
-                    <img
-                      src="/angbuilgu.png"
-                      alt="앙부일구"
-                      style={{
-                        maxWidth: '100%',
-                        maxHeight: '100%',
-                        objectFit: 'contain'
-                      }}
-                    />
-                  </div>
-                  <h3 style={{
-                    fontSize: '1.3rem',
-                    fontWeight: 800,
-                    marginBottom: '0.5rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem'
-                  }}>
-                    <span style={{ color: '#4caf50' }}>★</span>
-                    앙부일구 (해시계)
-                  </h3>
-                  <p style={{
-                    fontSize: '0.95rem',
-                    color: '#666',
-                    lineHeight: 1.6
-                  }}>
-                    시간을 정확히 알 수 있는 해시계를 만들었어요.
-                  </p>
-                </div>
-              </div>
-
-              {/* 퀴즈 섹션 */}
-              <div style={{
-                background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
-                borderRadius: '1.5rem',
-                padding: '3rem',
-                marginBottom: '2rem',
-                boxShadow: '0 8px 24px rgba(25, 118, 210, 0.3)',
-                textAlign: 'center',
-                color: 'white'
-              }}>
-                <div style={{
-                  background: 'rgba(255,255,255,0.2)',
-                  display: 'inline-block',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '2rem',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  marginBottom: '1.5rem'
-                }}>
-                  🎯 퀴즈 타임
-                </div>
-                <h2 style={{
-                  fontSize: '2rem',
-                  fontWeight: 800,
-                  marginBottom: '2rem'
-                }}>
-                  "내가 <span style={{ color: '#ffeb3b' }}>한글</span>을 만들었을까요?"
-                </h2>
-                <div style={{
-                  display: 'flex',
-                  gap: '1.5rem',
-                  justifyContent: 'center',
-                  maxWidth: '400px',
-                  margin: '0 auto'
-                }}>
-                  <button style={{
-                    flex: 1,
-                    background: 'white',
-                    color: '#4caf50',
-                    border: 'none',
-                    borderRadius: '1rem',
-                    padding: '1.5rem',
-                    fontSize: '1.3rem',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                    transition: 'all 0.2s',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '0.5rem'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.05)'
-                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.2)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)'
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)'
-                  }}>
-                    <div style={{ fontSize: '2rem' }}>⭕</div>
-                    <div>네!</div>
-                  </button>
-                  <button style={{
-                    flex: 1,
-                    background: 'white',
-                    color: '#f44336',
-                    border: 'none',
-                    borderRadius: '1rem',
-                    padding: '1.5rem',
-                    fontSize: '1.3rem',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                    transition: 'all 0.2s',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '0.5rem'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.05)'
-                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.2)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)'
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)'
-                  }}>
-                    <div style={{ fontSize: '2rem' }}>❌</div>
-                    <div>아니요</div>
+                  >
+                    다시 해보기
                   </button>
                 </div>
-              </div>
-
-              {/* CTA 섹션 */}
-              <div style={{
-                background: 'white',
-                borderRadius: '1.5rem',
-                padding: '2.5rem',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-                textAlign: 'center'
-              }}>
-                <div style={{
-                  background: '#e3f2fd',
-                  borderRadius: '50%',
-                  width: '60px',
-                  height: '60px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 1.5rem',
-                  fontSize: '1.8rem'
-                }}>
-                  💬
-                </div>
-                <h3 style={{
-                  fontSize: '1.5rem',
-                  fontWeight: 800,
-                  marginBottom: '0.8rem'
-                }}>
-                  이제 나와 비밀 이야기를 나눠볼까?
-                </h3>
-                <p style={{
-                  fontSize: '1rem',
-                  color: '#666',
-                  marginBottom: '1.5rem'
-                }}>
-                  궁금한 것을 질문해 주면 내가 답해줄게!
-                </p>
-                <button
-                  onClick={() => handleModeChange('chat')}
-                  style={{
-                    background: '#1976d2',
-                    color: 'white',
-                    border: 'none',
-                    padding: '1rem 2rem',
-                    borderRadius: '0.8rem',
-                    fontSize: '1.1rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(25, 118, 210, 0.4)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)'
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(25, 118, 210, 0.3)'
-                  }}
-                >
-                  대화하러 가기 →
-                </button>
-              </div>
+              )}
 
               {/* 푸터 */}
               <div style={{
@@ -3344,8 +3143,7 @@ function App() {
                 fontSize: '0.85rem',
                 color: '#999'
               }}>
-                © 2024 세종대왕 프로젝트. 학교에서 즐기는 한글 교육 프로그램<br/>
-                개인정보처리방침 | 개인정보처리방침
+                © 2024 세종대왕 프로젝트. 학교에서 즐기는 한글 교육 프로그램
               </div>
             </div>
           </div>
