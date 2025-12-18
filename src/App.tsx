@@ -2518,7 +2518,7 @@ function App() {
                         {showAvatar && (
                           <p style={{
                             margin: '0 0 0.25rem 0',
-                            fontSize: '0.9rem',
+                            fontSize: '1.1rem',
                             fontWeight: 600,
                             color: '#666',
                             paddingLeft: isUser ? 0 : '0.25rem',
@@ -2536,7 +2536,7 @@ function App() {
                           borderRadius: '1.25rem',
                           borderTopLeftRadius: !isUser && showAvatar ? '0.25rem' : '1.25rem',
                           borderTopRightRadius: isUser && showAvatar ? '0.25rem' : '1.25rem',
-                          fontSize: '1.2rem',
+                          fontSize: '1.5rem',
                           lineHeight: '1.6',
                           whiteSpace: 'pre-wrap',
                           wordBreak: 'break-word',
@@ -2619,11 +2619,11 @@ function App() {
                       background: 'transparent',
                       border: 'none',
                       outline: 'none',
-                      fontSize: '1.25rem',
-                      padding: '1rem 0.75rem',
+                      fontSize: '1.6rem',
+                      padding: '1.25rem 1rem',
                       resize: 'none',
-                      minHeight: '56px',
-                      maxHeight: '150px',
+                      minHeight: '80px',
+                      maxHeight: '200px',
                       fontFamily: 'inherit',
                       color: '#0d121b',
                       fontWeight: 500
@@ -2638,18 +2638,18 @@ function App() {
                       color: 'white',
                       border: 'none',
                       borderRadius: '50%',
-                      width: '48px',
-                      height: '48px',
+                      width: '60px',
+                      height: '60px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: submitting || !input.trim() ? 'not-allowed' : 'pointer',
                       transition: 'all 0.2s',
                       boxShadow: submitting || !input.trim() ? 'none' : '0 4px 12px rgba(74, 112, 96, 0.3)',
-                      fontSize: '1.5rem',
+                      fontSize: '2rem',
                       flexShrink: 0,
-                      marginBottom: '0.25rem',
-                      marginRight: '0.25rem'
+                      marginBottom: '0.5rem',
+                      marginRight: '0.5rem'
                     }}
                     onMouseEnter={(e) => {
                       if (!submitting && input.trim()) {
